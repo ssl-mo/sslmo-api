@@ -1,5 +1,6 @@
 package com.sslmo
 
+import com.sslmo.database.DatabaseFactory
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
@@ -10,6 +11,8 @@ import kotlinx.serialization.json.Json
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
+    DatabaseFactory.init(environment.config)
+
     install(ContentNegotiation) {
         json(Json {
             prettyPrint = true
