@@ -24,15 +24,31 @@ repositories {
 dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
+
+//    Request
+    implementation("io.ktor:ktor-server-request-validation:$ktor_version")
+
+//    Response
+    implementation("io.ktor:ktor-server-status-pages:$ktor_version")
+
+//    Json
     implementation("io.ktor:ktor-server-content-negotiation:$ktor_version")
     implementation("io.ktor:ktor-serialization-kotlinx-json:$ktor_version")
 
+//    Log
     implementation("ch.qos.logback:logback-classic:$logback_version")
 
+//    Swagger
     implementation("io.github.smiley4:ktor-swagger-ui:2.2.0")
+    implementation("io.swagger.core.v3:swagger-annotations:2.2.14")
+
+//    DB
     implementation("mysql:mysql-connector-java:8.0.33")
     implementation("org.ktorm:ktorm-core:3.6.0")
     implementation("com.zaxxer:HikariCP:5.0.1")
+
+//    Auth
+    implementation("at.favre.lib:bcrypt:0.10.2")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")
