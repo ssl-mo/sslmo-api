@@ -1,0 +1,3 @@
+[submodule "sslmo-api-config"]
+	path = sslmo-api-config
+	url = https://github.com/ssl-mo/sslmo-api-config
