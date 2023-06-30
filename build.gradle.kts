@@ -25,6 +25,9 @@ dependencies {
     implementation("io.ktor:ktor-server-core-jvm:$ktor_version")
     implementation("io.ktor:ktor-server-netty-jvm:$ktor_version")
 
+//    Header
+    implementation("io.ktor:ktor-server-forwarded-header:$ktor_version")
+
 //    Request
     implementation("io.ktor:ktor-server-request-validation:$ktor_version")
 

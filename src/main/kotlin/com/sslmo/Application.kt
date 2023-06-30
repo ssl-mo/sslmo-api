@@ -12,6 +12,7 @@ import io.ktor.server.application.*
 import io.ktor.server.netty.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.contentnegotiation.*
+import io.ktor.server.plugins.forwardedheaders.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
@@ -21,6 +22,8 @@ fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
     DatabaseFactory.init(environment.config)
+
+    install(XForwardedHeaders)
 
     install(ContentNegotiation) {
         json(Json {
