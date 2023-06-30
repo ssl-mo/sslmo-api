@@ -1,10 +1,7 @@
 package com.sslmo.v1.auth
 
-import com.sslmo.database.DatabaseFactory
-import io.github.smiley4.ktorswaggerui.dsl.post
-import io.ktor.server.routing.*
 import io.ktor.server.application.*
-import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 fun Application.authRouting(
     group: String,
@@ -13,5 +10,6 @@ fun Application.authRouting(
 
     routing {
         signIn(auth)
+        signCheck(auth)
     }
 }

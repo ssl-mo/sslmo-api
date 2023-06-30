@@ -1,12 +1,12 @@
 package com.sslmo.database
 
+import com.sslmo.models.SignType
 import org.ktorm.database.Database
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.entity.sequenceOf
 import org.ktorm.schema.*
 import java.time.LocalDate
 import java.util.*
-import com.sslmo.models.SignType
 
 data class User(
     val id: Int,
@@ -41,7 +41,7 @@ object Users : BaseTable<User>("user") {
         id = row[id] ?: 0,
         uuid = row[uuid] ?: UUID.randomUUID(),
         type = row[type] ?: SignType.EMAIL,
-        socialId =  row[socialId],
+        socialId = row[socialId],
         email = row[email] ?: "",
         password = row[password],
         nickname = row[nickname] ?: "",

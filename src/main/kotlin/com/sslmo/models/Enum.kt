@@ -7,3 +7,15 @@ enum class SignType {
     NAVER,
     KAKAO;
 }
+
+enum class AppMode {
+    LOCAL,
+    DEV,
+    PROD;
+}
+
+enum class AuthorizedType {
+    APP,
+    ACCESS,
+    REFRESH,
+}

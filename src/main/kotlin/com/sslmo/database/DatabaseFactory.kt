@@ -6,18 +6,18 @@ import io.ktor.server.config.*
 import org.ktorm.database.Database
 
 object DatabaseFactory {
-    fun init(config: ApplicationConfig) {
-        val url = config.propertyOrNull("database.url")?.getString() ?: "jdbc:mysql://localhost:3306/sslmo"
-        val user = config.propertyOrNull("database.user")?.getString() ?: "root"
-        val password = config.propertyOrNull("database.password")?.getString() ?: "1234"
+    fun init(config: ApplicationConfig?) {
+        val url = config?.propertyOrNull("database.url")?.getString() ?: "jdbc:mysql://localhost:3306/sslmo"
+        val user = config?.propertyOrNull("database.user")?.getString() ?: "root"
+        val password = config?.propertyOrNull("database.password")?.getString() ?: "1234"
 
         val database = Database.connect(createHikariDataSource(url, user, password))
     }
 
-    fun connect(config: ApplicationConfig): Database {
-        val url = config.propertyOrNull("database.url")?.getString() ?: "jdbc:mysql://localhost:3306/sslmo"
-        val user = config.propertyOrNull("database.user")?.getString() ?: "root"
-        val password = config.propertyOrNull("database.password")?.getString() ?: "1234"
+    fun connect(config: ApplicationConfig?): Database {
+        val url = config?.propertyOrNull("database.url")?.getString() ?: "jdbc:mysql://localhost:3306/sslmo"
+        val user = config?.propertyOrNull("database.user")?.getString() ?: "root"
+        val password = config?.propertyOrNull("database.password")?.getString() ?: "1234"
 
         return Database.connect(createHikariDataSource(url, user, password))
     }

@@ -3,12 +3,13 @@ package com.sslmo
 import DefaultResponse
 import com.sslmo.database.DatabaseFactory
 import com.sslmo.models.SignType
+import com.sslmo.plugins.AuthorizedRouteSelector
 import com.sslmo.v1.auth.SignInRequest
 import io.github.smiley4.ktorswaggerui.SwaggerUI
 import io.ktor.http.*
+import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.application.*
 import io.ktor.server.netty.*
-import io.ktor.serialization.kotlinx.json.*
 import io.ktor.server.plugins.*
 import io.ktor.server.plugins.contentnegotiation.*
 import io.ktor.server.plugins.requestvalidation.*
@@ -34,6 +35,7 @@ fun Application.module() {
                 SignType.EMAIL -> if (req.email.isEmpty() && req.password?.isEmpty() == true) ValidationResult.Invalid(
                     "email"
                 ) else ValidationResult.Valid
+
                 else -> if (req.email.isEmpty() && req.socialId?.isEmpty() == true) ValidationResult.Invalid(
                     "social"
                 ) else ValidationResult.Valid
@@ -53,6 +55,7 @@ fun Application.module() {
     configureRouting()
 
     install(SwaggerUI) {
+        ignoredRouteSelectors = listOf(AuthorizedRouteSelector::class)
         swagger {
             swaggerUrl = "swagger"
             forwardRoot = true

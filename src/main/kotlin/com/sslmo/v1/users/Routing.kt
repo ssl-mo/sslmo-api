@@ -1,9 +1,8 @@
 package com.sslmo.v1.users
 
-import DefaultResponse
-import io.ktor.server.routing.*
-import io.ktor.server.response.*
 import io.ktor.server.application.*
+import io.ktor.server.response.*
+import io.ktor.server.routing.*
 
 fun Application.usersRouting(
     group: String,
