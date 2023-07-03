@@ -16,6 +16,7 @@ fun Routing.signCheck(
     authorizedRoute(listOf(AuthorizedType.APP, AuthorizedType.ACCESS)) {
         get("$group/sign", {
             tags = listOf("Auth")
+            protected = true
             summary = "로그인 확인"
             response {
                 HttpStatusCode.OK to {

@@ -7,7 +7,7 @@ import io.ktor.server.config.*
 import java.util.*
 
 fun User.getAccessToken(config: ApplicationConfig): String {
-    val secret = config.propertyOrNull("jwt.secret.access")?.getString() ?: "secret"
+    val secret = config.getAccessJWTSecret()
 
     return JWT.create()
         .withClaim("uuid", uuid.toString())
@@ -16,7 +16,7 @@ fun User.getAccessToken(config: ApplicationConfig): String {
 }
 
 fun User.getRefreshToken(config: ApplicationConfig): String {
-    val secret = config.propertyOrNull("jwt.refresh.access")?.getString() ?: "secret"
+    val secret = config.getRefreshJWTSecret()
 
     return JWT.create()
         .withClaim("uuid", uuid.toString())

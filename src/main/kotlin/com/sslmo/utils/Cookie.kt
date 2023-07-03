@@ -10,8 +10,10 @@ fun PipelineContext<*, ApplicationCall>.setCookie(
     maxAge: Long,
 ) {
 
-    val secure = application.getAppMode() != AppMode.LOCAL
-    val httpOnly = application.getAppMode() != AppMode.LOCAL
+    val config = application.environment.config
+
+    val secure = config.getAppMode() != AppMode.LOCAL
+    val httpOnly = config.getAppMode() != AppMode.LOCAL
 
     call.response.cookies.append(
         name,

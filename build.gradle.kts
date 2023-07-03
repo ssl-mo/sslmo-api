@@ -51,6 +51,7 @@ dependencies {
     implementation("com.zaxxer:HikariCP:5.0.1")
 
 //    Auth
+    implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("at.favre.lib:bcrypt:0.10.2")
     implementation("com.auth0:java-jwt:4.4.0")
 

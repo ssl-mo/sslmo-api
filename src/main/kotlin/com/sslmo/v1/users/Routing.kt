@@ -10,8 +10,5 @@ fun Application.usersRouting(
     val users = "$group/users"
 
     routing {
-        get(users) {
-            call.respondText("sslmo-api")
-        }
     }
 }

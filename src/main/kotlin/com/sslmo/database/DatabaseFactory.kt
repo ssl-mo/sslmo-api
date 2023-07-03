@@ -1,5 +1,8 @@
 package com.sslmo.database
 
+import com.sslmo.utils.getDBPassword
+import com.sslmo.utils.getDBUrl
+import com.sslmo.utils.getDBUser
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.config.*
@@ -7,17 +10,17 @@ import org.ktorm.database.Database
 
 object DatabaseFactory {
     fun init(config: ApplicationConfig?) {
-        val url = config?.propertyOrNull("database.url")?.getString() ?: "jdbc:mysql://localhost:3306/sslmo"
-        val user = config?.propertyOrNull("database.user")?.getString() ?: "root"
-        val password = config?.propertyOrNull("database.password")?.getString() ?: "1234"
+        val url = config.getDBUrl()
+        val user = config.getDBUser()
+        val password = config.getDBPassword()
 
         val database = Database.connect(createHikariDataSource(url, user, password))
     }
 
     fun connect(config: ApplicationConfig?): Database {
-        val url = config?.propertyOrNull("database.url")?.getString() ?: "jdbc:mysql://localhost:3306/sslmo"
-        val user = config?.propertyOrNull("database.user")?.getString() ?: "root"
-        val password = config?.propertyOrNull("database.password")?.getString() ?: "1234"
+        val url = config.getDBUrl()
+        val user = config.getDBUser()
+        val password = config.getDBPassword()
 
         return Database.connect(createHikariDataSource(url, user, password))
     }

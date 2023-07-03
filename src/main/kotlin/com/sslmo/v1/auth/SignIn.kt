@@ -27,6 +27,7 @@ fun Routing.signIn(
     authorizedRoute(listOf(AuthorizedType.APP)) {
         post("$group/sign", {
             tags = listOf("Auth")
+            protected = true
             summary = "로그인"
             request {
                 body<SignInRequest>()
@@ -61,6 +62,9 @@ fun Routing.signIn(
                         if (!verified) {
                             call.respond(HttpStatusCode.NotFound, DefaultResponse(message = "bad_password"))
                         }
+
+                        setCookie("access-token", it.getAccessToken(config), 60 * 30)
+                        setCookie("refresh-token", it.getRefreshToken(config), 60 * 60 * 24 * 14)
 
                     } ?: run {
                         call.respond(HttpStatusCode.NotFound, DefaultResponse(message = "not_found_user"))

@@ -8,6 +8,10 @@ import com.sslmo.database.DatabaseFactory
 import com.sslmo.database.User
 import com.sslmo.database.users
 import com.sslmo.models.AuthorizedType
+import com.sslmo.utils.getAccessJWTSecret
+import com.sslmo.utils.getAppKeyHeader
+import com.sslmo.utils.getAppKeyValue
+import com.sslmo.utils.getRefreshJWTSecret
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -44,7 +48,7 @@ val AuthorizedRoutePlugin = createRouteScopedPlugin(
             types.forEach { type ->
                 when (type) {
                     AuthorizedType.ACCESS -> {
-                        val accessSecret = config?.propertyOrNull("jwt.secret.access")?.getString() ?: "secret"
+                        val accessSecret = config.getAccessJWTSecret()
 
                         call.request.cookies["access-token"]?.let { accessToken ->
                             try {
@@ -89,7 +93,7 @@ val AuthorizedRoutePlugin = createRouteScopedPlugin(
                     }
 
                     AuthorizedType.REFRESH -> {
-                        val refreshSecret = config?.propertyOrNull("jwt.secret.refresh")?.getString() ?: "secret"
+                        val refreshSecret = config.getRefreshJWTSecret()
 
                         call.request.cookies["refresh-token"]?.let { refreshToken ->
                             try {
@@ -134,8 +138,8 @@ val AuthorizedRoutePlugin = createRouteScopedPlugin(
                     }
 
                     AuthorizedType.APP -> {
-                        val appKeyHeader = config?.propertyOrNull("app.key.header")?.getString() ?: "keyHeader"
-                        val appKeyValue = config?.propertyOrNull("app.key.value")?.getString() ?: "keyValue"
+                        val appKeyHeader = config.getAppKeyHeader()
+                        val appKeyValue = config.getAppKeyValue()
 
                         call.request.headers[appKeyHeader]?.let {
                             if (it != appKeyValue) {
