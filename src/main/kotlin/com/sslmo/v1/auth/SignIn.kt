@@ -18,6 +18,7 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable
+import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.entity.find
 
@@ -52,8 +53,8 @@ fun Routing.signIn(
             when (request.type) {
                 SignType.EMAIL -> {
                     val user = database.users.find {
-                        it.type eq request.type
-                        it.email eq request.email
+                        (it.type eq request.type) and
+                                (it.email eq request.email)
                     }
 
                     user?.let {
@@ -73,9 +74,9 @@ fun Routing.signIn(
 
                 else -> {
                     val user = database.users.find {
-                        it.type eq request.type
-                        it.email eq request.email
-                        it.socialId eq request.socialId!!
+                        (it.type eq request.type) and
+                                (it.email eq request.email) and
+                                (it.socialId eq request.socialId!!)
                     }
 
                     user?.let {
