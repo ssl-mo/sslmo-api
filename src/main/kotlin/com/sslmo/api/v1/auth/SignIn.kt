@@ -1,4 +1,4 @@
-package com.sslmo.v1.auth
+package com.sslmo.api.v1.auth
 
 import DefaultResponse
 import at.favre.lib.crypto.bcrypt.BCrypt
@@ -22,11 +22,11 @@ import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.entity.find
 
-fun Routing.signIn(
-    group: String,
-) {
+fun Route.signIn() {
+
     authorizedRoute(listOf(AuthorizedType.APP)) {
-        post("$group/sign", {
+
+        post("/sign", {
             tags = listOf("Auth")
             protected = true
             summary = "로그인"

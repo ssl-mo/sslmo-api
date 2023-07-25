@@ -1,4 +1,4 @@
-package com.sslmo.v1.users
+package com.sslmo.api.v1.users
 
 import DefaultResponse
 import at.favre.lib.crypto.bcrypt.BCrypt
@@ -21,11 +21,11 @@ import org.ktorm.dsl.eq
 import org.ktorm.dsl.insert
 import org.ktorm.entity.find
 
-fun Routing.signUp(
-    group: String,
+fun Route.signUp(
+
 ) {
     authorizedRoute(listOf(AuthorizedType.APP)) {
-        post(group, {
+        post({
             tags = listOf("Users")
             protected = true
             summary = "회원가입"
