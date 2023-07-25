@@ -22,19 +22,20 @@ import org.ktorm.entity.find
 import java.util.*
 
 fun Route.authorizedRoute(authorizedTypes: List<AuthorizedType>, build: Route.() -> Unit): Route {
-    return createChild(AuthorizedRouteSelector()).apply {
-        install(AuthorizedRoutePlugin) {
+    val route = createChild(AuthorizedRouteSelector()).also {
+        it.install(AuthorizedRoutePlugin) {
             types = authorizedTypes
+            it.build()
         }
-        build()
     }
+    return route
 }
 
 class AuthorizedRouteSelector : RouteSelector() {
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int) = RouteSelectorEvaluation.Transparent
 }
 
-val onCallUserKey = AttributeKey<User>("onCallUserKey")
+private val onCallUserKey = AttributeKey<User>("onCallUserKey")
 
 val AuthorizedRoutePlugin = createRouteScopedPlugin(
     name = "AuthorizedRoutePlugin",

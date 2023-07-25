@@ -1,4 +1,4 @@
-package com.sslmo.v1.auth
+package com.sslmo.api.v1.auth
 
 import DefaultResponse
 import com.sslmo.models.AuthorizedType
@@ -10,11 +10,11 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
-fun Routing.signCheck(
-    group: String,
+fun Route.signCheck(
+
 ) {
     authorizedRoute(listOf(AuthorizedType.APP, AuthorizedType.ACCESS)) {
-        get("$group/sign", {
+        get("/sign", {
             tags = listOf("Auth")
             protected = true
             summary = "로그인 확인"
