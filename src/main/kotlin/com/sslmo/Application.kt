@@ -22,9 +22,9 @@ fun Application.module() {
     // StatusPage
     configureStatusPage()
 
-    // Authorization
-    configureAuthorization()
-
     // Routing
     configureRouting()
+
+    // Authorization
+    configureAuthorization()
 }
