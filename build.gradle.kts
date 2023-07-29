@@ -53,7 +53,8 @@ dependencies {
 //    Auth
     implementation("io.ktor:ktor-server-auth:$ktor_version")
     implementation("at.favre.lib:bcrypt:0.10.2")
-    implementation("com.auth0:java-jwt:4.4.0")
+//    implementation("com.auth0:java-jwt:4.4.0")
+    implementation("io.ktor:ktor-server-auth-jwt:2.3.2")
 
     testImplementation("io.ktor:ktor-server-tests-jvm:$ktor_version")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit:$kotlin_version")

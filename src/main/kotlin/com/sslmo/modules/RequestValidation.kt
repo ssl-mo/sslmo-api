@@ -1,13 +1,13 @@
 package com.sslmo.modules
 
-import com.sslmo.api.v1.auth.SignInRequest
 import com.sslmo.models.SignType
+import com.sslmo.models.user.LoginRequest
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 
 fun Application.configureRequestValidation() {
     install(RequestValidation) {
-        validate<SignInRequest> { req ->
+        validate<LoginRequest> { req ->
             when (req.type) {
                 SignType.EMAIL -> if (req.email.isEmpty() && req.password?.isEmpty() == true) ValidationResult.Invalid(
                     "email"

@@ -6,8 +6,8 @@ fun Route.authRouting() {
 
 
     route("/auth") {
-        signIn()
-        signCheck()
+//        signIn()
+//        signCheck()
 
     }
 }

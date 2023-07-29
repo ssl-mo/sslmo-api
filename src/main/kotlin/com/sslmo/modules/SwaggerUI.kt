@@ -1,6 +1,5 @@
 package com.sslmo.modules
 
-import com.sslmo.plugins.AuthorizedRouteSelector
 import com.sslmo.utils.getAppHost
 import com.sslmo.utils.getAppKeyHeader
 import io.github.smiley4.ktorswaggerui.SwaggerUI
@@ -11,7 +10,7 @@ import io.ktor.server.application.*
 
 fun Application.configureSwaggerUI() {
     install(SwaggerUI) {
-        ignoredRouteSelectors = listOf(AuthorizedRouteSelector::class)
+//        ignoredRouteSelectors = listOf(AuthorizedRouteSelector::class)
         securityScheme(environment.config.getAppKeyHeader()) {
             type = AuthType.API_KEY
             location = AuthKeyLocation.HEADER

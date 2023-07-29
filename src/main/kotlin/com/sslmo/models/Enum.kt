@@ -1,5 +1,9 @@
 package com.sslmo.models
 
+import kotlinx.serialization.Serializable
+
+
+@Serializable
 enum class SignType {
     EMAIL,
     GOOGLE,
@@ -8,14 +12,20 @@ enum class SignType {
     KAKAO;
 }
 
+
 enum class AppMode {
     LOCAL,
     DEV,
     PROD;
 }
 
-enum class AuthorizedType {
-    APP,
+//enum class AuthorizedType {
+//    APP,
+//    ACCESS,
+//    REFRESH,
+//}
+
+enum class TokenType {
     ACCESS,
     REFRESH,
 }
