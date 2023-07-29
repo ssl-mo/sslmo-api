@@ -5,9 +5,9 @@ import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
 import com.sslmo.database.DatabaseFactory
-import com.sslmo.database.User
-import com.sslmo.database.users
+import com.sslmo.database.tables.users
 import com.sslmo.models.TokenType
+import com.sslmo.models.user.User
 import com.sslmo.utils.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -54,7 +54,7 @@ val AuthorizedRoutePlugin =
             onCall { call ->
 
 
-                val database = DatabaseFactory.connect(config)
+                val database = DatabaseFactory.connect()
 
                 call.request.headers["Authorization"]?.let { value ->
 

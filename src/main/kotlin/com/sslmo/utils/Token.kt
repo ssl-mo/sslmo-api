@@ -2,7 +2,7 @@ package com.sslmo.utils
 
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
-import com.sslmo.database.User
+import com.sslmo.models.user.User
 import io.ktor.server.config.*
 import kotlinx.serialization.Serializable
 import java.time.LocalDateTime

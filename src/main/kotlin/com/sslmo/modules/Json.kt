@@ -5,7 +5,6 @@ import io.ktor.server.application.*
 import io.ktor.server.plugins.contentnegotiation.*
 import kotlinx.serialization.ExperimentalSerializationApi
 import kotlinx.serialization.KSerializer
-import kotlinx.serialization.Serializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
 import kotlinx.serialization.descriptors.SerialDescriptor
@@ -34,7 +33,7 @@ fun Application.configureJson() {
 }
 
 
-@Serializer(forClass = UUID::class)
+@ExperimentalSerializationApi
 object UUIDSerializerModule : KSerializer<UUID> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
 
@@ -51,7 +50,6 @@ object UUIDSerializerModule : KSerializer<UUID> {
 }
 
 
-@Serializer(forClass = LocalDate::class)
 object LocalDateSerializerModule : KSerializer<LocalDate> {
     override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("LocalDate", PrimitiveKind.STRING)
 
