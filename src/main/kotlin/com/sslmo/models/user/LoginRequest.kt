@@ -9,3 +9,9 @@ data class EmailLoginRequest(
     @field:Schema(required = true) val email: String,
     @field:Schema(required = true) val password: String,
 )
+
+
+@Serializable
+data class SocialLoginRequest(
+    val socialId: String
+)

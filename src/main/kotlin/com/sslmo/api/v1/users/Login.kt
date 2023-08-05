@@ -3,10 +3,14 @@ package com.sslmo.api.v1.users
 import Response
 import at.favre.lib.crypto.bcrypt.BCrypt
 import com.sslmo.database.DatabaseFactory
+import com.sslmo.database.DatabaseFactory.dbQuery
 import com.sslmo.database.tables.users
+import com.sslmo.models.AppMode
 import com.sslmo.models.SignType
 import com.sslmo.models.user.EmailLoginRequest
 import com.sslmo.models.user.LoginResponse
+import com.sslmo.models.user.SocialLoginRequest
+import com.sslmo.utils.getAppMode
 import io.github.smiley4.ktorswaggerui.dsl.get
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -25,6 +29,8 @@ fun Route.login() {
 
     route("/login") {
 
+
+        // 이메일 로그인
         get("/email", {
             tags = listOf("User")
             summary = "이메일 로그인"
@@ -74,6 +80,70 @@ fun Route.login() {
             }
 
 
+        }
+
+
+        // 카카오 로그인
+        get("/kakao", {
+            tags = listOf("User")
+            summary = "카카오 로그인"
+            request {
+                body<SocialLoginRequest>()
+            }
+            response {
+                HttpStatusCode.OK to {
+                    description = "success"
+                    body<Response.Success<*>>()
+                }
+                HttpStatusCode.BadRequest to {
+                    description = "bad_request"
+                    body<Response.Error<*>>()
+                }
+            }
+        }) {
+
+            val request = call.receive<SocialLoginRequest>()
+
+            val user = dbQuery { database ->
+                database.users.filter {
+                    it.type eq SignType.KAKAO
+                }.find {
+                    it.socialId eq request.socialId
+                }
+
+
+            }
+            if (user == null) {
+                call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
+                return@get
+            } else {
+                val config = application.environment.config
+
+                val token = user.generateToken(config)
+
+                call.response.cookies.apply {
+                    append(
+                        Cookie(
+                            "access-token",
+                            token.accessToken,
+                            maxAge = 60 * 60 * 24 * 7,
+                            httpOnly = true,
+                            secure = application.environment.config.getAppMode() == AppMode.PROD
+                        )
+                    )
+                    append(
+                        Cookie(
+                            "refresh-token",
+                            token.refreshToken,
+                            maxAge = 60 * 60 * 24 * 30,
+                            httpOnly = true,
+                            secure = application.environment.config.getAppMode() == AppMode.PROD
+                        )
+                    )
+                }
+
+                call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
+            }
         }
     }
 
