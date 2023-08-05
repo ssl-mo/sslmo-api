@@ -51,41 +51,45 @@ val AuthorizedRoutePlugin =
         val logger = LoggerFactory.getLogger("AuthorizedRoutePlugin")
 
         pluginConfig.apply {
+            
+
             onCall { call ->
 
-
                 val database = DatabaseFactory.connect()
-
-                call.request.headers["Authorization"]?.let { value ->
-
-                    // get the Token in the Bearer Token
-                    val token = value.split(" ")[1]
-
-                    logger.info("token: $token")
+                val jwtAudience = config.getAppName()
+                val jwtIssuer = config.getAppHost()
 
 
-                    val jwtAudience = config.getAppName()
-                    val jwtIssuer = config.getAppHost()
+                when (type) {
+                    TokenType.ACCESS -> {
 
-                    when (type) {
+                        val accessSecret = config.getAccessJWTSecret()
+                        call.request.cookies["access-token"]?.let { accessToken ->
 
-                        TokenType.ACCESS -> {
-                            val accessSecret = config.getAccessJWTSecret()
+                            logger.info("token: $accessToken")
 
 
                             try {
-                                val credential = JWT
-                                    .require(Algorithm.HMAC256(accessSecret))
+
+                                val credential = JWT.require(Algorithm.HMAC256(accessSecret))
                                     .withAudience(jwtAudience)
                                     .withIssuer(jwtIssuer)
                                     .build()
-                                    .verify(token)
+                                    .verify(accessToken)
+
 
                                 // 토큰 만료 여부 확인
                                 if (credential.expiresAt.before(Date())) {
                                     call.respond(
                                         HttpStatusCode.Unauthorized,
                                         Response.Error("만료된 토큰", "다시 로그인 해주세요")
+                                    )
+
+                                } else if (TokenType.valueOf(credential.getClaim("type").asString()) != type) {
+
+                                    call.respond(
+                                        HttpStatusCode.Unauthorized,
+                                        Response.Error("유효하지 않은 토큰", "다시 시도 해주세요")
                                     )
                                 } else {
 
@@ -110,24 +114,29 @@ val AuthorizedRoutePlugin =
                                             Response.Error("유효하지 않은 토큰", "다시 시도 해주세요")
                                         )
                                     }
+
                                 }
 
-
                             } catch (e: JWTVerificationException) {
-                                call.respond(HttpStatusCode.Unauthorized, Response.Error(e.message, "다시 시도 해주세요"))
+                                call.respond(HttpStatusCode.Unauthorized, Response.Error("인증된 토큰이 아닙니다.", "다시 시도 해주세요"))
                             }
-
-
+                        } ?: run {
+                            call.respond(HttpStatusCode.Unauthorized, Response.Error("토큰이 없습니다.", "다시 시도 해주세요"))
                         }
+                    }
 
-                        TokenType.REFRESH -> {
-                            val refreshSecret = config.getRefreshJWTSecret()
+                    TokenType.REFRESH -> {
+
+                        val refreshSecret = config.getRefreshJWTSecret()
+
+                        call.request.cookies["refresh-token"]?.let { refreshToken ->
 
                             try {
-                                val credential = JWT
-                                    .require(Algorithm.HMAC256(refreshSecret))
+                                val credential = JWT.require(Algorithm.HMAC256(refreshSecret))
+                                    .withAudience(jwtAudience)
+                                    .withIssuer(jwtIssuer)
                                     .build()
-                                    .verify(token)
+                                    .verify(refreshToken)
 
 
                                 if (credential.expiresAt.before(Date())) {
@@ -135,25 +144,49 @@ val AuthorizedRoutePlugin =
                                         HttpStatusCode.Unauthorized,
                                         Response.Error("만료된 토큰", "다시 로그인 해주세요")
                                     )
+
+                                } else if (TokenType.valueOf(
+                                        credential.getClaim("type").asString()
+                                    ) != TokenType.REFRESH
+                                ) {
+                                    call.respond(
+                                        HttpStatusCode.Unauthorized,
+                                        Response.Error("유효하지 않은 토큰", "다시 시도 해주세요")
+                                    )
                                 } else {
 
-                                    credential.getClaim("uuid").asString()?.let { uuid ->
+                                    credential.subject?.let { uuid ->
                                         database.users.find {
                                             it.uuid eq UUID.fromString(uuid)
                                             it.active eq true
                                         }?.let { user ->
 
-
                                             val accessToken = user.getAccessToken(config!!)
                                             val refreshToken = user.getRefreshToken(config)
 
-                                            call.respond(
-                                                HttpStatusCode.OK,
-                                                Response.Success(
-                                                    data = mapOf<String, String>(
-                                                        "access_token" to accessToken,
-                                                        "refresh_token" to refreshToken
-                                                    ), message = "토큰 재발급 성공"
+
+                                            // 쿠키에 토큰 저장
+                                            call.response.cookies.append(
+                                                Cookie(
+                                                    // access token
+                                                    name = "access-token",
+                                                    value = accessToken,
+                                                    path = "/",
+                                                    maxAge = 60 * 30,
+                                                    secure = true,
+                                                    httpOnly = true,
+                                                )
+                                            )
+
+                                            call.response.cookies.append(
+                                                Cookie(
+                                                    // refresh token
+                                                    name = "refresh-token",
+                                                    value = refreshToken,
+                                                    path = "/",
+                                                    maxAge = 60 * 60 * 24 * 14,
+                                                    secure = true,
+                                                    httpOnly = true,
                                                 )
                                             )
 
@@ -173,14 +206,18 @@ val AuthorizedRoutePlugin =
                                     }
                                 }
 
-                            } catch (_: JWTVerificationException) {
-                                call.respond(HttpStatusCode.Unauthorized, Response.Error("유효하지 않은 토큰", "다시 시도 해주세요"))
+                            } catch (e: JWTVerificationException) {
+                                call.respond(HttpStatusCode.Unauthorized, Response.Error("인증된 토큰이 아닙니다.", "다시 시도 해주세요"))
                             }
+
+
+                        } ?: run {
+                            call.respond(HttpStatusCode.Unauthorized, Response.Error("토큰이 없습니다.", "다시 시도 해주세요"))
                         }
+
+
                     }
-
                 }
-
 
             }
 

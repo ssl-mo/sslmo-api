@@ -14,13 +14,19 @@ fun Route.usersRouting() {
 
         login()
 
-        authorizedRoute(TokenType.ACCESS) {
+        register()
 
-            get("/test") {
 
-                call.respond(HttpStatusCode.OK, Response.Success(data = call.getUser(), message = "테스트 성공"))
+        route("/test") {
 
+            authorizedRoute(TokenType.ACCESS) {
+                get {
+                    call.respond(HttpStatusCode.OK, Response.Success(data = call.getUser(), message = "테스트 성공"))
+
+                }
             }
+
         }
+
     }
 }

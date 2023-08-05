@@ -6,8 +6,6 @@ import com.sslmo.database.DatabaseFactory
 import com.sslmo.database.tables.users
 import com.sslmo.models.SignType
 import com.sslmo.models.user.LoginRequest
-import com.sslmo.models.user.LoginResponse
-import com.sslmo.utils.Token
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -17,8 +15,11 @@ import io.ktor.server.routing.*
 import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.entity.find
+import org.slf4j.LoggerFactory
 
 fun Route.login() {
+
+    val logger = LoggerFactory.getLogger("Login Routing")
 
     post("/login", {
         tags = listOf("User")
@@ -61,11 +62,42 @@ fun Route.login() {
 
                 val config = application.environment.config
 
+                val token = user.generateToken(config)
+
+
+                logger.debug("token: {}", token)
+
+
+                // 쿠키에 토큰 저장
+                call.response.cookies.append(
+                    Cookie(
+                        // access token
+                        name = "access-token",
+                        value = token.accessToken,
+                        path = "/",
+                        maxAge = 60 * 30,
+                        secure = false,
+                        httpOnly = true,
+                    )
+                )
+
+                call.response.cookies.append(
+                    Cookie(
+                        // refresh token
+                        name = "refresh-token",
+                        value = token.refreshToken,
+                        path = "/",
+                        maxAge = 60 * 60 * 24 * 14,
+                        secure = false,
+                        httpOnly = true,
+                    )
+                )
+
 
                 call.respond(
                     HttpStatusCode.OK,
                     Response.Success(
-                        LoginResponse(user, Token.generateToken(config, user)),
+                        user,
                         "로그인에 성공하였습니다."
                     )
                 )
