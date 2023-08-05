@@ -24,8 +24,8 @@ object DatabaseFactory {
     fun connect(): Database = database
 
 
-    fun dbQuery(block: (database: Database) -> Unit) {
-        database.useTransaction {
+    fun <T> dbQuery(block: (database: Database) -> T): T {
+        return database.useTransaction {
             block(database)
         }
     }

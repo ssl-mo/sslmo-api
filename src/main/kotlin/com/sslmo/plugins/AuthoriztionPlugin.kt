@@ -8,7 +8,10 @@ import com.sslmo.database.DatabaseFactory
 import com.sslmo.database.tables.users
 import com.sslmo.models.TokenType
 import com.sslmo.models.user.User
-import com.sslmo.utils.*
+import com.sslmo.utils.getAccessJWTSecret
+import com.sslmo.utils.getAppHost
+import com.sslmo.utils.getAppName
+import com.sslmo.utils.getRefreshJWTSecret
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
@@ -51,7 +54,7 @@ val AuthorizedRoutePlugin =
         val logger = LoggerFactory.getLogger("AuthorizedRoutePlugin")
 
         pluginConfig.apply {
-            
+
 
             onCall { call ->
 
@@ -161,8 +164,7 @@ val AuthorizedRoutePlugin =
                                             it.active eq true
                                         }?.let { user ->
 
-                                            val accessToken = user.getAccessToken(config!!)
-                                            val refreshToken = user.getRefreshToken(config)
+                                            val token = user.generateToken(config!!)
 
 
                                             // 쿠키에 토큰 저장
@@ -170,7 +172,7 @@ val AuthorizedRoutePlugin =
                                                 Cookie(
                                                     // access token
                                                     name = "access-token",
-                                                    value = accessToken,
+                                                    value = token.accessToken,
                                                     path = "/",
                                                     maxAge = 60 * 30,
                                                     secure = true,
@@ -182,7 +184,7 @@ val AuthorizedRoutePlugin =
                                                 Cookie(
                                                     // refresh token
                                                     name = "refresh-token",
-                                                    value = refreshToken,
+                                                    value = token.refreshToken,
                                                     path = "/",
                                                     maxAge = 60 * 60 * 24 * 14,
                                                     secure = true,

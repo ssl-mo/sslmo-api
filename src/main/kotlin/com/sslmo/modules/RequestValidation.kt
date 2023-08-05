@@ -1,22 +1,23 @@
 package com.sslmo.modules
 
-import com.sslmo.models.SignType
-import com.sslmo.models.user.LoginRequest
+import com.sslmo.models.user.EmailLoginRequest
 import io.ktor.server.application.*
 import io.ktor.server.plugins.requestvalidation.*
 
 fun Application.configureRequestValidation() {
     install(RequestValidation) {
-        validate<LoginRequest> { req ->
-            when (req.type) {
-                SignType.EMAIL -> if (req.email.isEmpty() && req.password?.isEmpty() == true) ValidationResult.Invalid(
-                    "email"
-                ) else ValidationResult.Valid
+        validate<EmailLoginRequest> { req ->
 
-                else -> if (req.email.isEmpty() && req.socialId?.isEmpty() == true) ValidationResult.Invalid(
-                    "social"
-                ) else ValidationResult.Valid
+            val emailRegex = Regex("^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,6}$")
+
+            when {
+                req.email.isEmpty() -> ValidationResult.Invalid("email을 입력해주세요")
+                !emailRegex.matches(req.email) -> ValidationResult.Invalid("email을 입력해주세요")
+                req.password.isEmpty() -> ValidationResult.Invalid("password를 입력해주세요")
+                else -> ValidationResult.Valid
             }
+
+
         }
     }
 }
