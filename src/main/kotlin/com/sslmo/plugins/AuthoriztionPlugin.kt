@@ -168,29 +168,32 @@ val AuthorizedRoutePlugin =
 
 
                                             // 쿠키에 토큰 저장
-                                            call.response.cookies.append(
-                                                Cookie(
-                                                    // access token
-                                                    name = "access-token",
-                                                    value = token.accessToken,
-                                                    path = "/",
-                                                    maxAge = 60 * 30,
-                                                    secure = true,
-                                                    httpOnly = true,
+                                            call.response.cookies.apply {
+                                                append(
+                                                    Cookie(
+                                                        // access token
+                                                        name = "access-token",
+                                                        value = token.accessToken,
+                                                        path = "/",
+                                                        maxAge = 60 * 30,
+                                                        secure = true,
+                                                        httpOnly = true,
+                                                    )
                                                 )
-                                            )
 
-                                            call.response.cookies.append(
-                                                Cookie(
-                                                    // refresh token
-                                                    name = "refresh-token",
-                                                    value = token.refreshToken,
-                                                    path = "/",
-                                                    maxAge = 60 * 60 * 24 * 14,
-                                                    secure = true,
-                                                    httpOnly = true,
+                                                append(
+                                                    Cookie(
+                                                        // refresh token
+                                                        name = "refresh-token",
+                                                        value = token.refreshToken,
+                                                        path = "/",
+                                                        maxAge = 60 * 60 * 24 * 14,
+                                                        secure = true,
+                                                        httpOnly = true,
+                                                    )
                                                 )
-                                            )
+
+                                            }
 
 
                                         } ?: run {

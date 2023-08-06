@@ -19,16 +19,17 @@ import java.util.*
 @OptIn(ExperimentalSerializationApi::class)
 fun Application.configureJson() {
     install(ContentNegotiation) {
-        json(Json {
-            prettyPrint = true
-            isLenient = true
-            namingStrategy = SnakeCase
-            serializersModule = SerializersModule {
-                contextual(UUID::class, UUIDSerializerModule)
-                contextual(LocalDate::class, LocalDateSerializerModule)
+        json(
+            Json {
+                prettyPrint = true
+                isLenient = true
+                namingStrategy = SnakeCase
+                serializersModule = SerializersModule {
+                    contextual(UUID::class, UUIDSerializerModule)
+                    contextual(LocalDate::class, LocalDateSerializerModule)
+                }
             }
-
-        })
+        )
     }
 }
 
