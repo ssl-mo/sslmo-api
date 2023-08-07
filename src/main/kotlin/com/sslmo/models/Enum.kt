@@ -19,12 +19,6 @@ enum class AppMode {
     PROD;
 }
 
-//enum class AuthorizedType {
-//    APP,
-//    ACCESS,
-//    REFRESH,
-//}
-
 enum class TokenType {
     ACCESS,
     REFRESH,

@@ -8,8 +8,12 @@ import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
+import org.slf4j.LoggerFactory
 
 fun Route.usersRouting() {
+
+    val logger = LoggerFactory.getLogger("Users Routing")
+
     route("/user") {
 
         login()
@@ -17,15 +21,18 @@ fun Route.usersRouting() {
         register()
 
 
-        route("/test") {
+    }
 
-            authorizedRoute(TokenType.ACCESS) {
-                get {
-                    call.respond(HttpStatusCode.OK, Response.Success(data = call.getUser(), message = "테스트 성공"))
+    route("/test") {
 
-                }
+
+        authorizedRoute(TokenType.ACCESS) {
+            get("") {
+
+
+                call.respond(HttpStatusCode.OK, Response.Success(data = call.getUser(), message = "테스트 성공"))
+
             }
-
         }
 
     }

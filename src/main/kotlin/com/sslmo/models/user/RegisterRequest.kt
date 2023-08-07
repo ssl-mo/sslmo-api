@@ -1,5 +1,6 @@
 package com.sslmo.models.user
 
+import com.sslmo.models.SignType
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
 
@@ -25,6 +26,7 @@ data class EmailRegisterRequest(
 @Serializable
 data class SocialRegisterRequest(
     val socialId: String,
+    val type: SignType,
     override val email: String,
     override val nickName: String
 ) : LoginRequest()

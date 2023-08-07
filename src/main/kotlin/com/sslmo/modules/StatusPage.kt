@@ -8,6 +8,7 @@ import io.ktor.server.plugins.*
 import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
+import kotlinx.serialization.SerializationException
 
 fun Application.configureStatusPage() {
     install(StatusPages) {
@@ -18,5 +19,10 @@ fun Application.configureStatusPage() {
 
             call.respond(HttpStatusCode.BadRequest, Response.Error(e.reasons, "해당 필드에서 오류가 발생했습니다."))
         }
+
+        exception<SerializationException> { call, _ ->
+            call.respond(HttpStatusCode.InternalServerError, DefaultResponse(message = "internal_server_error"))
+        }
+        
     }
 }

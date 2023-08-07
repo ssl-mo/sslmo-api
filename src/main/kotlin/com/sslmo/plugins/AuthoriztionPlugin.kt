@@ -48,20 +48,14 @@ private val onCallUserKey = AttributeKey<User>("onCallUserKey")
 
 val AuthorizedRoutePlugin =
     createRouteScopedPlugin(name = "NewAuthorizedRoutePlugin", createConfiguration = ::PluginConfiguration) {
-
         val config = environment?.config
-
         val logger = LoggerFactory.getLogger("AuthorizedRoutePlugin")
-
         pluginConfig.apply {
-
-
             onCall { call ->
 
                 val database = DatabaseFactory.connect()
                 val jwtAudience = config.getAppName()
                 val jwtIssuer = config.getAppHost()
-
 
                 when (type) {
                     TokenType.ACCESS -> {
