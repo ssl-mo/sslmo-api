@@ -23,15 +23,13 @@ import org.slf4j.LoggerFactory
 import java.util.*
 
 
-fun Route.authorizedRoute(tokenType: TokenType, build: Route.() -> Unit): Route {
-
-    val route = createChild(AuthorizedRouteSelector()).also {
+fun Route.withCookie(tokenType: TokenType, build: Route.() -> Unit): Route {
+    val route = createChild(AuthorizedRouteSelector()).apply {
         install(AuthorizedRoutePlugin) {
             type = tokenType
-            it.build()
+            build()
         }
     }
-
     return route
 }
 
@@ -40,7 +38,7 @@ class AuthorizedRouteSelector : RouteSelector() {
     override fun evaluate(context: RoutingResolveContext, segmentIndex: Int) = RouteSelectorEvaluation.Transparent
 
     override fun toString(): String {
-        return "AuthorizedRoute"
+        return "( AuthorizedRoute )"
     }
 }
 
@@ -59,13 +57,9 @@ val AuthorizedRoutePlugin =
 
                 when (type) {
                     TokenType.ACCESS -> {
-
                         val accessSecret = config.getAccessJWTSecret()
                         call.request.cookies["access-token"]?.let { accessToken ->
-
                             logger.info("token: $accessToken")
-
-
                             try {
 
                                 val credential = JWT.require(Algorithm.HMAC256(accessSecret))
@@ -123,9 +117,7 @@ val AuthorizedRoutePlugin =
                     }
 
                     TokenType.REFRESH -> {
-
                         val refreshSecret = config.getRefreshJWTSecret()
-
                         call.request.cookies["refresh-token"]?.let { refreshToken ->
 
                             try {
@@ -174,7 +166,6 @@ val AuthorizedRoutePlugin =
                                                         httpOnly = true,
                                                     )
                                                 )
-
                                                 append(
                                                     Cookie(
                                                         // refresh token
@@ -188,7 +179,6 @@ val AuthorizedRoutePlugin =
                                                 )
 
                                             }
-
 
                                         } ?: run {
                                             call.respond(
@@ -209,12 +199,9 @@ val AuthorizedRoutePlugin =
                                 call.respond(HttpStatusCode.Unauthorized, Response.Error("인증된 토큰이 아닙니다.", "다시 시도 해주세요"))
                             }
 
-
                         } ?: run {
                             call.respond(HttpStatusCode.Unauthorized, Response.Error("토큰이 없습니다.", "다시 시도 해주세요"))
                         }
-
-
                     }
                 }
 

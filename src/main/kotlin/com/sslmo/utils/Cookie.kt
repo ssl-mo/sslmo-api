@@ -19,6 +19,7 @@ fun PipelineContext<*, ApplicationCall>.setCookie(
             Cookie(
                 "access-token",
                 accessToken,
+                path = "/",
                 maxAge = 60 * 60 * 24 * 7,
                 httpOnly = httpOnly,
                 secure = secure
@@ -28,6 +29,7 @@ fun PipelineContext<*, ApplicationCall>.setCookie(
             Cookie(
                 "refresh-token",
                 refreshToken,
+                path = "/",
                 maxAge = 60 * 60 * 24 * 30,
                 httpOnly = httpOnly,
                 secure = secure
