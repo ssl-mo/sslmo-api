@@ -1,4 +1,4 @@
-package com.sslmo.database
+package com.sslmo.database.sql_types
 
 import org.ktorm.schema.BaseTable
 import org.ktorm.schema.Column
@@ -26,3 +26,4 @@ object UUIDSqlType : SqlType<UUID>(Types.VARBINARY, typeName = "uuid") {
         return UUID(high, low)
     }
 }
+

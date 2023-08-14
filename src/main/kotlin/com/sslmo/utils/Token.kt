@@ -1,25 +1,9 @@
 package com.sslmo.utils
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.algorithms.Algorithm
-import com.sslmo.database.User
-import io.ktor.server.config.*
-import java.util.*
+import kotlinx.serialization.Serializable
 
-fun User.getAccessToken(config: ApplicationConfig): String {
-    val secret = config.getAccessJWTSecret()
-
-    return JWT.create()
-        .withClaim("uuid", uuid.toString())
-        .withExpiresAt(Date(System.currentTimeMillis() + 1000 * 60 * 30))
-        .sign(Algorithm.HMAC256(secret))
-}
-
-fun User.getRefreshToken(config: ApplicationConfig): String {
-    val secret = config.getRefreshJWTSecret()
-
-    return JWT.create()
-        .withClaim("uuid", uuid.toString())
-        .withExpiresAt(Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24 * 14))
-        .sign(Algorithm.HMAC256(secret))
-}
+@Serializable
+data class Token(
+    val accessToken: String,
+    val refreshToken: String
+)

@@ -9,20 +9,25 @@ import io.ktor.server.config.*
 import org.ktorm.database.Database
 
 object DatabaseFactory {
+
+    private lateinit var database: Database
+
+
     fun init(config: ApplicationConfig?) {
         val url = config.getDBUrl()
         val user = config.getDBUser()
         val password = config.getDBPassword()
 
-        val database = Database.connect(createHikariDataSource(url, user, password))
+        database = Database.connect(createHikariDataSource(url, user, password))
     }
 
-    fun connect(config: ApplicationConfig?): Database {
-        val url = config.getDBUrl()
-        val user = config.getDBUser()
-        val password = config.getDBPassword()
+    fun connect(): Database = database
 
-        return Database.connect(createHikariDataSource(url, user, password))
+
+    fun <T> dbQuery(block: (database: Database) -> T): T {
+        return database.useTransaction {
+            block(database)
+        }
     }
 
     private fun createHikariDataSource(

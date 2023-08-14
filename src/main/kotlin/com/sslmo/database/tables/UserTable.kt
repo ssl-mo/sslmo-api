@@ -1,6 +1,8 @@
-package com.sslmo.database
+package com.sslmo.database.tables
 
+import com.sslmo.database.sql_types.uuid
 import com.sslmo.models.SignType
+import com.sslmo.models.user.User
 import org.ktorm.database.Database
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.entity.sequenceOf
@@ -8,20 +10,6 @@ import org.ktorm.schema.*
 import java.time.LocalDate
 import java.util.*
 
-data class User(
-    val id: Int,
-    val uuid: UUID,
-    val type: SignType,
-    val socialId: String?,
-    val email: String,
-    val password: String?,
-    val nickname: String,
-    val notification: Boolean,
-    val active: Boolean,
-    val inActiveAt: LocalDate?,
-    val createdAt: LocalDate,
-    val updatedAt: LocalDate?,
-)
 
 object Users : BaseTable<User>("user") {
     val id = int("id").primaryKey()
