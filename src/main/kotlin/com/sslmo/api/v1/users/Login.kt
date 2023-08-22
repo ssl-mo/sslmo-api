@@ -9,6 +9,7 @@ import com.sslmo.models.SignType
 import com.sslmo.models.user.EmailLoginRequest
 import com.sslmo.models.user.LoginResponse
 import com.sslmo.models.user.SocialLoginRequest
+import com.sslmo.models.user.User
 import com.sslmo.utils.setCookie
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.http.*
@@ -35,7 +36,7 @@ fun Route.login() {
 			response {
 				HttpStatusCode.OK to {
 					description = "success"
-					body<Response.Success<*>>()
+					body<Response.Success<User>>()
 				}
 				HttpStatusCode.BadRequest to {
 					description = "bad_request"
@@ -79,7 +80,7 @@ fun Route.login() {
 			response {
 				HttpStatusCode.OK to {
 					description = "success"
-					body<Response.Success<*>>()
+					body<Response.Success<User>>()
 				}
 				HttpStatusCode.BadRequest to {
 					description = "bad_request"
@@ -116,7 +117,7 @@ fun Route.login() {
 			response {
 				HttpStatusCode.OK to {
 					description = "success"
-					body<Response.Success<*>>()
+					body<Response.Success<User>>()
 				}
 				HttpStatusCode.BadRequest to {
 					description = "bad_request"
@@ -153,7 +154,7 @@ fun Route.login() {
 			response {
 				HttpStatusCode.OK to {
 					description = "success"
-					body<Response.Success<*>>()
+					body<Response.Success<User>>()
 				}
 				HttpStatusCode.BadRequest to {
 					description = "bad_request"
@@ -182,16 +183,18 @@ fun Route.login() {
 		// apple login
 		post("/apple", {
 			tags = listOf("User")
-			summary = "Apple login"
+			summary = "Apple로 로그인"
 			request {
 				body<SocialLoginRequest>()
 			}
 			response {
 				HttpStatusCode.OK to {
 					description = "success"
+					body<Response.Success<User>>()
 				}
 				HttpStatusCode.BadRequest to {
 					description = "bad_request"
+					body<Response.Error<*>>()
 				}
 			}
 		}) {
