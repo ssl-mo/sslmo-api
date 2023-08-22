@@ -19,60 +19,64 @@ import java.util.*
 
 @Serializable
 data class User(
-    val id: Int,
+	val id: Int,
 
-    @Contextual
-    val uuid: UUID,
-    val type: SignType,
-    val socialId: String?,
-    val email: String,
+	@Contextual
+	val uuid: UUID,
+	val type: SignType,
+	val socialId: String?,
+	val email: String,
 
-    @Transient
-    val password: String? = null,
-    val nickname: String,
-    val notification: Boolean,
-    val active: Boolean,
+	@Transient
+	val password: String? = null,
+	val nickname: String,
+	val notification: Boolean,
+	val active: Boolean,
 
-    @Contextual
-    val inActiveAt: LocalDate?,
+	@Contextual
+	val inActiveAt: LocalDate?,
 
-    @Contextual
-    val createdAt: LocalDate,
+	@Contextual
+	val createdAt: LocalDate,
 
-    @Contextual
-    val updatedAt: LocalDate?,
+	@Contextual
+	val updatedAt: LocalDate?,
+
+	val siCode: Long,
+	val guCode: Long,
+	val dongCode: Long
 ) {
 
 
-    fun generateToken(config: ApplicationConfig): Token {
+	fun generateToken(config: ApplicationConfig): Token {
 
-        val jwtSecret = config.getAccessJWTSecret()
-        val jwtAudience = config.getAppName()
-        val jwtIssuer = config.getAppHost()
-        var expiredAt = LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.UTC)
-
-
-        val accessToken =
-            JWT.create()
-                .withIssuer(jwtIssuer)
-                .withAudience(jwtAudience)
-                .withSubject(uuid.toString())
-                .withClaim("type", TokenType.ACCESS.name)
-                .withExpiresAt(expiredAt)
-                .sign(Algorithm.HMAC256(jwtSecret))
-
-        expiredAt = LocalDateTime.now().plusDays(14).toInstant(ZoneOffset.UTC)
-
-        val refreshToken =
-            JWT.create()
-                .withIssuer(jwtIssuer)
-                .withAudience(jwtAudience)
-                .withSubject(uuid.toString())
-                .withClaim("type", TokenType.ACCESS.name)
-                .withExpiresAt(expiredAt)
-                .sign(Algorithm.HMAC256(jwtSecret))
+		val jwtSecret = config.getAccessJWTSecret()
+		val jwtAudience = config.getAppName()
+		val jwtIssuer = config.getAppHost()
+		var expiredAt = LocalDateTime.now().plusMinutes(30).toInstant(ZoneOffset.UTC)
 
 
-        return Token(accessToken, refreshToken)
-    }
+		val accessToken =
+			JWT.create()
+				.withIssuer(jwtIssuer)
+				.withAudience(jwtAudience)
+				.withSubject(uuid.toString())
+				.withClaim("type", TokenType.ACCESS.name)
+				.withExpiresAt(expiredAt)
+				.sign(Algorithm.HMAC256(jwtSecret))
+
+		expiredAt = LocalDateTime.now().plusDays(14).toInstant(ZoneOffset.UTC)
+
+		val refreshToken =
+			JWT.create()
+				.withIssuer(jwtIssuer)
+				.withAudience(jwtAudience)
+				.withSubject(uuid.toString())
+				.withClaim("type", TokenType.ACCESS.name)
+				.withExpiresAt(expiredAt)
+				.sign(Algorithm.HMAC256(jwtSecret))
+
+
+		return Token(accessToken, refreshToken)
+	}
 }

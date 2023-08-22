@@ -24,6 +24,9 @@ object Users : BaseTable<User>("user") {
 	val inActiveAt = date("in_active_at")
 	val createdAt = date("created_at")
 	val updatedAt = date("updated_at")
+	val siCode = long("si_code")
+	val guCode = long("gu_code")
+	val dongCode = long("dong_code")
 
 	override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = User(
 		id = row[id] ?: 0,
@@ -38,6 +41,10 @@ object Users : BaseTable<User>("user") {
 		inActiveAt = row[inActiveAt],
 		createdAt = row[createdAt] ?: LocalDate.now(),
 		updatedAt = row[updatedAt],
+		siCode = row[siCode] ?: 0,
+		guCode = row[guCode] ?: 0,
+		dongCode = row[dongCode] ?: 0
+
 	)
 }
 
