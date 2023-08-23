@@ -5,15 +5,11 @@ import org.slf4j.LoggerFactory
 
 fun Route.usersRouting() {
 
-    val logger = LoggerFactory.getLogger("Users Routing")
+	val logger = LoggerFactory.getLogger("Users Routing")
 
-    route("/user") {
-
-        login()
-
-        register()
-
-
-    }
+	route("/user") {
+		login()
+		register()
+	}
 
 }

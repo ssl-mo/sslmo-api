@@ -8,16 +8,12 @@ import io.ktor.server.response.*
 import io.ktor.server.routing.*
 
 fun Application.configureRouting() {
-    routing {
-        get("/") {
-            call.respondText(application.environment.config.getAppName())
-        }
+	routing {
 
-        get("/ping") {
-            call.respond(DefaultResponse(message = "pong"))
-        }
+		get("/") { call.respondText(application.environment.config.getAppName()) }
 
-        v1Routing()
-    }
+		get("/ping") { call.respond(DefaultResponse(message = "pong")) }
 
+		v1Routing()
+	}
 }
