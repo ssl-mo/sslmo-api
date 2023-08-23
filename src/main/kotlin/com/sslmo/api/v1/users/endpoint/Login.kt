@@ -1,13 +1,9 @@
-package com.sslmo.api.v1.users
+package com.sslmo.api.v1.users.endpoint
 
 import Response
-import at.favre.lib.crypto.bcrypt.BCrypt
-import com.sslmo.database.DatabaseFactory
-import com.sslmo.database.DatabaseFactory.dbQuery
-import com.sslmo.database.tables.users
+import com.sslmo.api.v1.users.service.UserService
 import com.sslmo.models.SignType
 import com.sslmo.models.user.EmailLoginRequest
-import com.sslmo.models.user.LoginResponse
 import com.sslmo.models.user.SocialLoginRequest
 import com.sslmo.models.user.User
 import com.sslmo.utils.setCookie
@@ -17,12 +13,12 @@ import io.ktor.server.application.*
 import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
-import org.ktorm.dsl.eq
-import org.ktorm.entity.filter
-import org.ktorm.entity.find
+import org.koin.ktor.ext.inject
 import org.slf4j.LoggerFactory
 
 fun Route.login() {
+
+	val userService by inject<UserService>()
 
 	val logger = LoggerFactory.getLogger("Login Routing")
 	route("/login") {
@@ -44,29 +40,15 @@ fun Route.login() {
 				}
 			}
 		}) {
-
 			val request = call.receive<EmailLoginRequest>()
-			val database = DatabaseFactory.connect()
-			val user = database.users.filter {
-				it.type eq SignType.EMAIL
-			}.find {
-				it.email eq request.email
-			}
+			val user = userService.emailLogin(request.email, request.password)
+
 			if (user == null) {
 				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
-				return@post
 			} else {
-				val passwordVeriyfied =
-					BCrypt.verifyer().verify(request.password.toCharArray(), user.password).verified
-				if (!passwordVeriyfied) {
-					call.respond(HttpStatusCode.Unauthorized, Response.Error("비밀번호가 일치하지 않습니다.", "로그인에 실패하였습니다."))
-					return@post
-				} else {
-					val config = application.environment.config
-					val token = user.generateToken(config)
-					this.setCookie(token.accessToken, token.refreshToken)
-					call.respond(HttpStatusCode.OK, Response.Success(LoginResponse(user, token), "로그인에 성공하였습니다."))
-				}
+				val token = user.generateToken(application.environment.config)
+				this.setCookie(token.accessToken, token.refreshToken)
+				call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
 			}
 		}
 
@@ -89,19 +71,13 @@ fun Route.login() {
 			}
 		}) {
 			val request = call.receive<SocialLoginRequest>()
-			val user = dbQuery { database ->
-				database.users.filter {
-					it.type eq SignType.KAKAO
-				}.find {
-					it.socialId eq request.socialId
-				}
-			}
+			val user = userService.socialLogin(request.socialId, SignType.KAKAO)
+
 			if (user == null) {
 				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
 				return@post
 			} else {
-				val config = application.environment.config
-				val token = user.generateToken(config)
+				val token = user.generateToken(application.environment.config)
 				this.setCookie(token.accessToken, token.refreshToken)
 				call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
 			}
@@ -126,17 +102,11 @@ fun Route.login() {
 			}
 		}) {
 			val request = call.receive<SocialLoginRequest>()
-
-			val user = dbQuery { database ->
-				database.users.filter {
-					it.type eq SignType.NAVER
-				}.find {
-					it.socialId eq request.socialId
-				}
-			}
+			val user = userService.socialLogin(request.socialId, SignType.NAVER)
 
 			if (user == null) {
 				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
+				return@post
 			} else {
 				val token = user.generateToken(application.environment.config)
 				this.setCookie(token.accessToken, token.refreshToken)
@@ -162,22 +132,17 @@ fun Route.login() {
 				}
 			}
 		}) {
-
 			val request = call.receive<SocialLoginRequest>()
-
-			val user = dbQuery { database ->
-				database.users.filter { it.type eq SignType.GOOGLE }.find { it.socialId eq request.socialId }
-			}
+			val user = userService.socialLogin(request.socialId, SignType.GOOGLE)
 
 			if (user == null) {
 				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
+				return@post
 			} else {
 				val token = user.generateToken(application.environment.config)
 				this.setCookie(token.accessToken, token.refreshToken)
 				call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
 			}
-
-
 		}
 
 		// apple login
@@ -198,18 +163,12 @@ fun Route.login() {
 				}
 			}
 		}) {
-
 			val request = call.receive<SocialLoginRequest>()
-			val user = dbQuery { database ->
-				database.users.filter {
-					it.type eq SignType.APPLE
-				}.find {
-					it.socialId eq request.socialId
-				}
-			}
+			val user = userService.socialLogin(request.socialId, SignType.KAKAO)
 
 			if (user == null) {
 				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
+				return@post
 			} else {
 				val token = user.generateToken(application.environment.config)
 				this.setCookie(token.accessToken, token.refreshToken)
