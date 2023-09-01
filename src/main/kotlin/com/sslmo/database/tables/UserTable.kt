@@ -1,8 +1,8 @@
 package com.sslmo.database.tables
 
+import com.sslmo.api.v1.users.models.User
 import com.sslmo.database.sql_types.uuid
 import com.sslmo.models.SignType
-import com.sslmo.models.user.User
 import org.ktorm.database.Database
 import org.ktorm.dsl.QueryRowSet
 import org.ktorm.entity.sequenceOf

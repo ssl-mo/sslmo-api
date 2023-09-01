@@ -1,14 +1,14 @@
 package com.sslmo.api.v1.users.repository
 
 import at.favre.lib.crypto.bcrypt.BCrypt
+import com.sslmo.api.v1.users.models.BaseRegisterRequest
+import com.sslmo.api.v1.users.models.EmailRegisterRequest
+import com.sslmo.api.v1.users.models.SocialRegisterRequest
+import com.sslmo.api.v1.users.models.User
 import com.sslmo.database.DatabaseFactory.dbQuery
 import com.sslmo.database.tables.Users
 import com.sslmo.database.tables.users
 import com.sslmo.models.SignType
-import com.sslmo.models.user.BaseRegisterRequest
-import com.sslmo.models.user.EmailRegisterRequest
-import com.sslmo.models.user.SocialRegisterRequest
-import com.sslmo.models.user.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Module
@@ -48,6 +48,7 @@ class UserRepository {
 			dbQuery { database ->
 				database.users.find {
 					it.email eq email
+					it.type eq SignType.EMAIL
 				}
 			}
 		}
@@ -66,7 +67,7 @@ class UserRepository {
 
 	suspend fun addNewUser(registerRequest: BaseRegisterRequest): Int {
 
-		return when (registerRequest) {
+		when (registerRequest) {
 			is EmailRegisterRequest -> {
 				val hashedPassword = BCrypt.withDefaults().hashToString(12, registerRequest.password.toCharArray())
 				return withContext(Dispatchers.IO) {

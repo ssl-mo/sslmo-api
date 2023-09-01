@@ -8,23 +8,28 @@ import io.ktor.server.netty.*
 fun main(args: Array<String>): Unit = EngineMain.main(args)
 
 fun Application.module() {
-    DatabaseFactory.init(environment.config)
 
-    // XForwardedHeaders
-    configureXFormHeaders()
 
-    // Json
-    configureJson()
+	DatabaseFactory.init(environment.config)
 
-    // RequestValidation
-    configureRequestValidation()
+	// Koin
+	configureKoin()
 
-    // StatusPage
-    configureStatusPage()
+	// XForwardedHeaders
+	configureXFormHeaders()
 
-    // Routing
-    configureRouting()
+	// Json
+	configureJson()
 
-    // Authorization
-    configureAuthorization()
+	// RequestValidation
+	configureRequestValidation()
+
+	// StatusPage
+	configureStatusPage()
+
+	// Routing
+	configureRouting()
+
+	// Authorization
+	configureAuthorization()
 }

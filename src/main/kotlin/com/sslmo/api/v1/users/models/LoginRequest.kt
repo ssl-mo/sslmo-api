@@ -1,4 +1,4 @@
-package com.sslmo.models.user
+package com.sslmo.api.v1.users.models
 
 import io.swagger.v3.oas.annotations.media.Schema
 import kotlinx.serialization.Serializable

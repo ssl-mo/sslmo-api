@@ -1,4 +1,4 @@
-package com.sslmo.models.user
+package com.sslmo.api.v1.users.models
 
 import com.sslmo.utils.Token
 import kotlinx.serialization.Serializable

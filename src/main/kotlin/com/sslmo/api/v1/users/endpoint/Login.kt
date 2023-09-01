@@ -1,11 +1,11 @@
 package com.sslmo.api.v1.users.endpoint
 
 import Response
+import com.sslmo.api.v1.users.models.EmailLoginRequest
+import com.sslmo.api.v1.users.models.SocialLoginRequest
+import com.sslmo.api.v1.users.models.User
 import com.sslmo.api.v1.users.service.UserService
 import com.sslmo.models.SignType
-import com.sslmo.models.user.EmailLoginRequest
-import com.sslmo.models.user.SocialLoginRequest
-import com.sslmo.models.user.User
 import com.sslmo.utils.setCookie
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.http.*
