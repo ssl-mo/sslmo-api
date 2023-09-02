@@ -1,5 +1,9 @@
 package com.sslmo.api.v1.users
 
+import com.sslmo.api.v1.users.endpoint.checkEmail
+import com.sslmo.api.v1.users.endpoint.login
+import com.sslmo.api.v1.users.endpoint.register
+import com.sslmo.api.v1.users.endpoint.resetPassword
 import io.ktor.server.routing.*
 import org.slf4j.LoggerFactory
 
@@ -10,6 +14,8 @@ fun Route.usersRouting() {
 	route("/user") {
 		login()
 		register()
+		checkEmail()
+		resetPassword()
 	}
 
 }

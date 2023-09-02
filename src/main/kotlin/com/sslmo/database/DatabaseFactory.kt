@@ -10,37 +10,37 @@ import org.ktorm.database.Database
 
 object DatabaseFactory {
 
-    private lateinit var database: Database
+	private lateinit var database: Database
 
 
-    fun init(config: ApplicationConfig?) {
-        val url = config.getDBUrl()
-        val user = config.getDBUser()
-        val password = config.getDBPassword()
+	fun init(config: ApplicationConfig?) {
+		val url = config.getDBUrl()
+		val user = config.getDBUser()
+		val password = config.getDBPassword()
 
-        database = Database.connect(createHikariDataSource(url, user, password))
-    }
+		database = Database.connect(createHikariDataSource(url, user, password))
+	}
 
-    fun connect(): Database = database
+	fun connect(): Database = database
 
 
-    fun <T> dbQuery(block: (database: Database) -> T): T {
-        return database.useTransaction {
-            block(database)
-        }
-    }
+	fun <T> dbQuery(block: (database: Database) -> T): T {
+		return database.useTransaction {
+			block(database)
+		}
+	}
 
-    private fun createHikariDataSource(
-        url: String,
-        user: String,
-        password: String,
-    ) = HikariDataSource(HikariConfig().apply {
-        jdbcUrl = url
-        driverClassName = "com.mysql.cj.jdbc.Driver"
-        username = user
-        setPassword(password)
-        maximumPoolSize = 3
-        validate()
-    })
+	private fun createHikariDataSource(
+		url: String,
+		user: String,
+		password: String,
+	) = HikariDataSource(HikariConfig().apply {
+		jdbcUrl = url
+		driverClassName = "com.mysql.cj.jdbc.Driver"
+		username = user
+		setPassword(password)
+		maximumPoolSize = 3
+		validate()
+	})
 
 }
