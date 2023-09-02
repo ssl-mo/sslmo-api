@@ -14,13 +14,11 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import org.koin.ktor.ext.inject
-import org.slf4j.LoggerFactory
 
 fun Route.login() {
 
 	val userService by inject<UserService>()
 
-	val logger = LoggerFactory.getLogger("Login Routing")
 	route("/login") {
 		// 이메일 로그인
 		post("/email", {
@@ -72,15 +70,10 @@ fun Route.login() {
 		}) {
 			val request = call.receive<SocialLoginRequest>()
 			val user = userService.socialLogin(request.socialId, SignType.KAKAO)
+			val token = user.generateToken(application.environment.config)
+			this.setCookie(token.accessToken, token.refreshToken)
+			call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
 
-			if (user == null) {
-				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
-				return@post
-			} else {
-				val token = user.generateToken(application.environment.config)
-				this.setCookie(token.accessToken, token.refreshToken)
-				call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
-			}
 		}
 
 		// 네이버 로그인
@@ -103,15 +96,9 @@ fun Route.login() {
 		}) {
 			val request = call.receive<SocialLoginRequest>()
 			val user = userService.socialLogin(request.socialId, SignType.NAVER)
-
-			if (user == null) {
-				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
-				return@post
-			} else {
-				val token = user.generateToken(application.environment.config)
-				this.setCookie(token.accessToken, token.refreshToken)
-				call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
-			}
+			val token = user.generateToken(application.environment.config)
+			this.setCookie(token.accessToken, token.refreshToken)
+			call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
 		}
 
 		// 구글 로그인
@@ -134,15 +121,10 @@ fun Route.login() {
 		}) {
 			val request = call.receive<SocialLoginRequest>()
 			val user = userService.socialLogin(request.socialId, SignType.GOOGLE)
+			val token = user.generateToken(application.environment.config)
+			this.setCookie(token.accessToken, token.refreshToken)
+			call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
 
-			if (user == null) {
-				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
-				return@post
-			} else {
-				val token = user.generateToken(application.environment.config)
-				this.setCookie(token.accessToken, token.refreshToken)
-				call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
-			}
 		}
 
 		// apple login
@@ -165,15 +147,9 @@ fun Route.login() {
 		}) {
 			val request = call.receive<SocialLoginRequest>()
 			val user = userService.socialLogin(request.socialId, SignType.KAKAO)
-
-			if (user == null) {
-				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
-				return@post
-			} else {
-				val token = user.generateToken(application.environment.config)
-				this.setCookie(token.accessToken, token.refreshToken)
-				call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
-			}
+			val token = user.generateToken(application.environment.config)
+			this.setCookie(token.accessToken, token.refreshToken)
+			call.respond(HttpStatusCode.OK, Response.Success(user, "로그인에 성공하였습니다."))
 		}
 	}
 
