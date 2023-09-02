@@ -15,8 +15,10 @@ import org.koin.core.annotation.Module
 import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insertAndGenerateKey
+import org.ktorm.dsl.update
 import org.ktorm.entity.filter
 import org.ktorm.entity.find
+import java.util.*
 
 
 @Module
@@ -67,7 +69,6 @@ class UserRepository {
 	}
 
 	suspend fun addNewUser(registerRequest: BaseRegisterRequest): Int {
-
 		when (registerRequest) {
 			is EmailRegisterRequest -> {
 				val hashedPassword = BCrypt.withDefaults().hashToString(12, registerRequest.password.toCharArray())
@@ -103,5 +104,22 @@ class UserRepository {
 			}
 
 		}
+	}
+
+	suspend fun resetPassword(userId: UUID, hashedPassword: String): Boolean {
+		return try {
+			withContext(Dispatchers.IO) {
+				dbQuery { database ->
+					database.update(Users) {
+						set(it.password, hashedPassword)
+					}
+				}
+			}
+
+			true
+		} catch (e: Exception) {
+			false
+		}
+
 	}
 }

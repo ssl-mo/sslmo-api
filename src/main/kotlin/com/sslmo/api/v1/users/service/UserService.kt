@@ -10,8 +10,11 @@ import com.sslmo.models.SignType
 import com.sslmo.system.error.DuplicateException
 import com.sslmo.system.error.InValidPasswordException
 import io.ktor.server.plugins.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Module
 import org.koin.java.KoinJavaComponent.inject
+import java.util.*
 
 @Module
 class UserService {
@@ -62,6 +65,13 @@ class UserService {
 
 	suspend fun checkEmailExist(email: String): Boolean {
 		return userRepository.findByEmail(email) != null
+	}
+
+	suspend fun resetPassword(userId: UUID, password: String): Boolean {
+		val hashedPassword = withContext(Dispatchers.Default) {
+			BCrypt.withDefaults().hashToString(12, password.toCharArray())
+		}
+		return userRepository.resetPassword(userId, hashedPassword)
 	}
 
 }
