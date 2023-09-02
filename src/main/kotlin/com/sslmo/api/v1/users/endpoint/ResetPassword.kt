@@ -6,7 +6,7 @@ import com.sslmo.api.v1.users.service.UserService
 import com.sslmo.models.TokenType
 import com.sslmo.plugins.getUser
 import com.sslmo.plugins.withCookie
-import io.github.smiley4.ktorswaggerui.dsl.put
+import io.github.smiley4.ktorswaggerui.dsl.patch
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.request.*
@@ -22,7 +22,7 @@ fun Route.resetPassword() {
 
 
 	withCookie(TokenType.ACCESS) {
-		put("/reset-password", {
+		patch("/reset-password", {
 			tags = listOf("User")
 			summary = "비밀 번호 변경"
 			headers {

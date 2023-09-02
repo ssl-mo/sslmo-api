@@ -29,7 +29,7 @@ object Users : BaseTable<User>("user") {
 	val dongCode = long("dong_code")
 
 	override fun doCreateEntity(row: QueryRowSet, withReferences: Boolean) = User(
-		id = row[id] ?: 0,
+		id = row[id]!!,
 		uuid = row[uuid] ?: UUID.randomUUID(),
 		type = row[type] ?: SignType.EMAIL,
 		socialId = row[socialId],
@@ -41,10 +41,9 @@ object Users : BaseTable<User>("user") {
 		inActiveAt = row[inActiveAt],
 		createdAt = row[createdAt] ?: LocalDate.now(),
 		updatedAt = row[updatedAt],
-		siCode = row[siCode] ?: 0,
-		guCode = row[guCode] ?: 0,
-		dongCode = row[dongCode] ?: 0
-
+		siCode = row[siCode],
+		guCode = row[guCode],
+		dongCode = row[dongCode]
 	)
 }
 

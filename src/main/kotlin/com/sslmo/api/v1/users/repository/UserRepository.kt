@@ -1,10 +1,7 @@
 package com.sslmo.api.v1.users.repository
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import com.sslmo.api.v1.users.models.BaseRegisterRequest
-import com.sslmo.api.v1.users.models.EmailRegisterRequest
-import com.sslmo.api.v1.users.models.SocialRegisterRequest
-import com.sslmo.api.v1.users.models.User
+import com.sslmo.api.v1.users.models.*
 import com.sslmo.database.DatabaseFactory.dbQuery
 import com.sslmo.database.tables.Users
 import com.sslmo.database.tables.users
@@ -79,9 +76,6 @@ class UserRepository {
 							set(it.password, hashedPassword)
 							set(it.nickname, registerRequest.nickName)
 							set(it.type, SignType.EMAIL)
-							set(it.siCode, registerRequest.siCode)
-							set(it.guCode, registerRequest.guCode)
-							set(it.dongCode, registerRequest.dongCode)
 						}
 					}.let { it as Int }
 				}
@@ -95,9 +89,6 @@ class UserRepository {
 							set(it.socialId, registerRequest.socialId)
 							set(it.nickname, registerRequest.nickName)
 							set(it.type, registerRequest.type)
-							set(it.siCode, registerRequest.siCode)
-							set(it.guCode, registerRequest.guCode)
-							set(it.dongCode, registerRequest.dongCode)
 						}.let { it as Int }
 					}
 				}
@@ -107,19 +98,33 @@ class UserRepository {
 	}
 
 	suspend fun resetPassword(userId: UUID, hashedPassword: String): Boolean {
-		return try {
+
+		return runCatching {
 			withContext(Dispatchers.IO) {
 				dbQuery { database ->
 					database.update(Users) {
 						set(it.password, hashedPassword)
+						where { it.uuid eq userId }
 					}
 				}
 			}
+		}.isSuccess
+	}
 
-			true
-		} catch (e: Exception) {
-			false
-		}
+	suspend fun updateAddresss(userId: UUID, address: UpdateAddresssRequest): Boolean {
 
+		return runCatching {
+			withContext(Dispatchers.IO) {
+				dbQuery { database ->
+					database.update(Users) {
+						set(it.siCode, address.siCode)
+						set(it.guCode, address.guCode)
+						set(it.dongCode, address.dongCode)
+						where { it.uuid eq userId }
+					}
+				}
+
+			}
+		}.isSuccess
 	}
 }
