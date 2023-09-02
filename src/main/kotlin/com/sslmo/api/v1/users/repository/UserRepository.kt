@@ -12,6 +12,7 @@ import com.sslmo.models.SignType
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.koin.core.annotation.Module
+import org.ktorm.dsl.and
 import org.ktorm.dsl.eq
 import org.ktorm.dsl.insertAndGenerateKey
 import org.ktorm.entity.filter
@@ -47,8 +48,8 @@ class UserRepository {
 		return withContext(Dispatchers.IO) {
 			dbQuery { database ->
 				database.users.find {
-					it.email eq email
-					it.type eq SignType.EMAIL
+					(it.email eq email) and
+							(it.type eq SignType.EMAIL)
 				}
 			}
 		}
