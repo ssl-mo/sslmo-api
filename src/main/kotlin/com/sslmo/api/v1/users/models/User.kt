@@ -42,9 +42,9 @@ data class User(
 	@Contextual
 	val updatedAt: LocalDate?,
 
-	val siCode: Long,
-	val guCode: Long,
-	val dongCode: Long
+	val siCode: Long?,
+	val guCode: Long?,
+	val dongCode: Long?
 ) {
 
 

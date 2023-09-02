@@ -1,10 +1,7 @@
 package com.sslmo.api.v1.users.service
 
 import at.favre.lib.crypto.bcrypt.BCrypt
-import com.sslmo.api.v1.users.models.BaseRegisterRequest
-import com.sslmo.api.v1.users.models.EmailRegisterRequest
-import com.sslmo.api.v1.users.models.SocialRegisterRequest
-import com.sslmo.api.v1.users.models.User
+import com.sslmo.api.v1.users.models.*
 import com.sslmo.api.v1.users.repository.UserRepository
 import com.sslmo.models.SignType
 import com.sslmo.system.error.DuplicateException
@@ -74,4 +71,6 @@ class UserService {
 		return userRepository.resetPassword(userId, hashedPassword)
 	}
 
+	suspend fun updateAddresss(userId: UUID, address: UpdateAddresssRequest): Boolean =
+		userRepository.updateAddresss(userId, address)
 }

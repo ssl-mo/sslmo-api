@@ -1,6 +1,5 @@
 package com.sslmo.api.v1.users
 
-import com.sslmo.api.v1.users.endpoint.checkEmail
 import com.sslmo.api.v1.users.endpoint.login
 import com.sslmo.api.v1.users.endpoint.register
 import com.sslmo.api.v1.users.endpoint.resetPassword
@@ -14,7 +13,6 @@ fun Route.usersRouting() {
 	route("/user") {
 		login()
 		register()
-		checkEmail()
 		resetPassword()
 	}
 
