@@ -6,7 +6,6 @@ import com.sslmo.api.v1.users.service.UserService
 import com.sslmo.models.TokenType
 import com.sslmo.plugins.getUser
 import com.sslmo.plugins.withCookie
-import io.github.smiley4.ktorswaggerui.dsl.get
 import io.github.smiley4.ktorswaggerui.dsl.patch
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.http.*
@@ -20,7 +19,7 @@ fun Route.register() {
 
 	val userService by inject<UserService>()
 
-	get("/check-email", {
+	post("/check-email", {
 		tags = listOf("User")
 		summary = "이메일 확인"
 		request {
