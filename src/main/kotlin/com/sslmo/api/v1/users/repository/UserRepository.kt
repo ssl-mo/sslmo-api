@@ -111,7 +111,7 @@ class UserRepository {
 		}.isSuccess
 	}
 
-	suspend fun updateAddresss(userId: UUID, address: UpdateAddresssRequest): Boolean {
+	suspend fun updateAddress(userId: UUID, address: UpdateAddressRequest): Boolean {
 
 		return runCatching {
 			withContext(Dispatchers.IO) {

@@ -71,6 +71,6 @@ class UserService {
 		return userRepository.resetPassword(userId, hashedPassword)
 	}
 
-	suspend fun updateAddresss(userId: UUID, address: UpdateAddresssRequest): Boolean =
-		userRepository.updateAddresss(userId, address)
+	suspend fun updateAddress(userId: UUID, address: UpdateAddressRequest): Boolean =
+		userRepository.updateAddress(userId, address)
 }

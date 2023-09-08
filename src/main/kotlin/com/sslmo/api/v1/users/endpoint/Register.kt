@@ -116,7 +116,7 @@ fun Route.register() {
 			protected = true
 			summary = "주소 업데이트"
 			request {
-				body<UpdateAddresssRequest>()
+				body<UpdateAddressRequest>()
 			}
 
 			response {
@@ -132,9 +132,9 @@ fun Route.register() {
 			}
 		}) {
 
-			val body = call.receive<UpdateAddresssRequest>()
+			val body = call.receive<UpdateAddressRequest>()
 			val user = call.getUser()
-			val result = userService.updateAddresss(user.uuid, body)
+			val result = userService.updateAddress(user.uuid, body)
 
 			if (result) {
 				call.respond(HttpStatusCode.OK, Response.Success(true, "업데이트 성공"))

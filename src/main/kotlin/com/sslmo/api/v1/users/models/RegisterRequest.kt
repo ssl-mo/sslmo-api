@@ -30,7 +30,7 @@ data class SocialRegisterRequest(
 ) : BaseRegisterRequest()
 
 @Serializable
-data class UpdateAddresssRequest(
+data class UpdateAddressRequest(
 	@Contextual
 	val siCode: Long,
 	val guCode: Long,
