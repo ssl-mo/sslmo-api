@@ -5,6 +5,7 @@ import com.sslmo.api.v1.users.models.EmailLoginRequest
 import com.sslmo.api.v1.users.models.SocialLoginRequest
 import com.sslmo.api.v1.users.models.User
 import com.sslmo.api.v1.users.service.UserService
+import com.sslmo.system.error.ErrorMessage
 import com.sslmo.utils.setCookie
 import io.github.smiley4.ktorswaggerui.dsl.post
 import io.ktor.http.*
@@ -31,9 +32,9 @@ fun Route.login() {
 					description = "success"
 					body<Response.Success<User>>()
 				}
-				HttpStatusCode.BadRequest to {
-					description = "bad_request"
-					body<Response.Error<*>>()
+				HttpStatusCode.NotFound to {
+					description = "not_found"
+					body<Response.Error>()
 				}
 			}
 		}) {
@@ -41,7 +42,7 @@ fun Route.login() {
 			val user = userService.emailLogin(request.email, request.password)
 
 			if (user == null) {
-				call.respond(HttpStatusCode.NotFound, Response.Error("존재하지 않는 유저입니다.", "로그인에 실패하였습니다."))
+				call.respond(HttpStatusCode.NotFound, Response.Error("not_found", ErrorMessage.NOT_FOUND_USER))
 			} else {
 				val token = user.generateToken(application.environment.config)
 				this.setCookie(token.accessToken, token.refreshToken)
@@ -58,12 +59,12 @@ fun Route.login() {
 			}
 			response {
 				HttpStatusCode.OK to {
-					description = "로그인 성공"
+					description = "succes"
 					body<Response.Success<User>>()
 				}
-				HttpStatusCode.BadRequest to {
-					description = "로그인 실패"
-					body<Response.Error<*>>()
+				HttpStatusCode.NotFound to {
+					description = "not_found"
+					body<Response.Error>()
 				}
 			}
 		}) {

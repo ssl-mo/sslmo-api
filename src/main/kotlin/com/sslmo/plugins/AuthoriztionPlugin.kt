@@ -8,6 +8,7 @@ import com.sslmo.api.v1.users.models.User
 import com.sslmo.database.DatabaseFactory
 import com.sslmo.database.tables.users
 import com.sslmo.models.TokenType
+import com.sslmo.system.error.ErrorMessage
 import com.sslmo.utils.getAccessJWTSecret
 import com.sslmo.utils.getAppHost
 import com.sslmo.utils.getAppName
@@ -73,14 +74,14 @@ val AuthorizedRoutePlugin =
 								if (credential.expiresAt.before(Date())) {
 									call.respond(
 										HttpStatusCode.Unauthorized,
-										Response.Error("만료된 토큰", "다시 로그인 해주세요")
+										Response.Error("unauthorized", ErrorMessage.UNAUTHORIZED)
 									)
 
 								} else if (TokenType.valueOf(credential.getClaim("type").asString()) != type) {
 
 									call.respond(
 										HttpStatusCode.Unauthorized,
-										Response.Error("유효하지 않은 토큰", "다시 시도 해주세요")
+										Response.Error("unauthorized", ErrorMessage.UNAUTHORIZED)
 									)
 								} else {
 
@@ -95,14 +96,14 @@ val AuthorizedRoutePlugin =
 										} ?: run {
 											call.respond(
 												HttpStatusCode.Unauthorized,
-												Response.Error("유효하지 않은 토큰", "다시 시도 해주세요")
+												Response.Error("unauthorized", ErrorMessage.UNAUTHORIZED)
 											)
 										}
 
 									} ?: run {
 										call.respond(
 											HttpStatusCode.Unauthorized,
-											Response.Error("유효하지 않은 토큰", "다시 시도 해주세요")
+											Response.Error("unauthorized", ErrorMessage.UNAUTHORIZED)
 										)
 									}
 

@@ -6,6 +6,7 @@ import com.sslmo.api.v1.users.service.UserService
 import com.sslmo.models.TokenType
 import com.sslmo.plugins.getUser
 import com.sslmo.plugins.withCookie
+import com.sslmo.system.error.ErrorMessage
 import io.github.smiley4.ktorswaggerui.dsl.get
 import io.github.smiley4.ktorswaggerui.dsl.patch
 import io.github.smiley4.ktorswaggerui.dsl.post
@@ -33,8 +34,8 @@ fun Route.register() {
 			}
 
 			HttpStatusCode.Conflict to {
-				description = "실패"
-				body<Response.Error<*>>()
+				description = "conflict"
+				body<Response.Error>()
 			}
 		}
 	}) {
@@ -44,7 +45,10 @@ fun Route.register() {
 		if (user) {
 			call.respond(
 				HttpStatusCode.Conflict,
-				Response.Error(error = "이미 가입한 이메일입니다. 로그인을 시도해주세요.", message = "실패")
+				Response.Error(
+					message = "duplicate",
+					description = ErrorMessage.USER_EXIST
+				)
 			)
 		} else {
 			call.respond(HttpStatusCode.OK, Response.Success(data = "가입 가능한 이메일입니다.", message = "성공"))
@@ -65,9 +69,9 @@ fun Route.register() {
 					body<Response.Success<*>> {
 					}
 				}
-				HttpStatusCode.BadRequest to {
-					description = "bad_request"
-					body<Response.Error<*>>()
+				HttpStatusCode.Conflict to {
+					description = "duplicate"
+					body<Response.Error>()
 				}
 			}
 		})
@@ -94,9 +98,9 @@ fun Route.register() {
 					description = "success"
 					body<Response.Success<*>>()
 				}
-				HttpStatusCode.BadRequest to {
-					description = "bad_request"
-					body<Response.Error<*>>()
+				HttpStatusCode.Conflict to {
+					description = "duplicate"
+					body<Response.Error>()
 				}
 			}
 		}) {
@@ -126,8 +130,8 @@ fun Route.register() {
 				}
 
 				HttpStatusCode.ExpectationFailed to {
-					description = "업데이트 실패"
-					body<Response.Error<Boolean>>()
+					description = "invalid_password"
+					body<Response.Error>()
 				}
 			}
 		}) {
@@ -139,7 +143,10 @@ fun Route.register() {
 			if (result) {
 				call.respond(HttpStatusCode.OK, Response.Success(true, "업데이트 성공"))
 			} else {
-				call.respond(HttpStatusCode.ExpectationFailed, Response.Success(false, "업데이트 실패"))
+				call.respond(
+					HttpStatusCode.ExpectationFailed,
+					Response.Error("invalid_password", ErrorMessage.INVALID_PASSWORD)
+				)
 			}
 		}
 	}

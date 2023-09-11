@@ -6,6 +6,7 @@ import com.sslmo.api.v1.users.service.UserService
 import com.sslmo.models.TokenType
 import com.sslmo.plugins.getUser
 import com.sslmo.plugins.withCookie
+import com.sslmo.system.error.ErrorMessage
 import io.github.smiley4.ktorswaggerui.dsl.patch
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -36,9 +37,9 @@ fun Route.resetPassword() {
 					description = "비밀번호 변경 성공"
 					body<Response.Success<*>>()
 				}
-				HttpStatusCode.BadRequest to {
-					description = "비밀번호 변경 실패"
-					body<Response.Error<*>>()
+				HttpStatusCode.ExpectationFailed to {
+					description = "fail"
+					body<Response.Error>()
 				}
 			}
 		}) {
@@ -50,7 +51,7 @@ fun Route.resetPassword() {
 			if (result) {
 				call.respond(HttpStatusCode.OK, Response.Success("비밀 번호 변경에 성공했습니다.", "재 로그인을 진행해주세요"))
 			} else {
-				call.respond(HttpStatusCode.BadRequest, Response.Error("비밀 번호 변경에 실패했습니다.", "실패"))
+				call.respond(HttpStatusCode.ExpectationFailed, Response.Error("fail", ErrorMessage.FAIL))
 			}
 		}
 	}

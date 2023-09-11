@@ -8,15 +8,15 @@ data class DefaultResponse(val message: String)
 sealed class Response {
 
 
-    @Serializable
-    data class Success<T>(
-        val data: T,
-        val message: String,
-    ) : Response()
+	@Serializable
+	data class Success<T>(
+		val data: T,
+		val message: String,
+	) : Response()
 
-    @Serializable
-    data class Error<T>(
-        val error: T,
-        val message: String,
-    ) : Response()
+	@Serializable
+	data class Error(
+		val message: String,
+		val description: String
+	) : Response()
 }
