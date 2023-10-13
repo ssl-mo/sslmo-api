@@ -12,7 +12,7 @@ fun Application.configureKoin() {
 	}
 
 	val service = module {
-		single { UserService() }
+		single { UserService(get()) }
 	}
 	install(Koin) {
 		modules(repository, service)
