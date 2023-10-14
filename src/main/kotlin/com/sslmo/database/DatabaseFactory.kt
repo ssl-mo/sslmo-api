@@ -21,7 +21,7 @@ object DatabaseFactory {
 
 		database = Database.connect(createHikariDataSource(url, user, password))
 	}
-	
+
 	fun <T> dbQuery(block: (database: Database) -> T): T {
 		return transaction {
 			block(database)

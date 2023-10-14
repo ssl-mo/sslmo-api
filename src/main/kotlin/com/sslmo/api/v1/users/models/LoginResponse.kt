@@ -5,4 +5,4 @@ import kotlinx.serialization.Serializable
 
 
 @Serializable
-data class LoginResponse(val user: User, val token: Token)
+data class LoginResponse(val userModel: UserModel, val token: Token)

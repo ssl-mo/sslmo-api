@@ -12,13 +12,12 @@ import io.ktor.server.config.*
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.Transient
-import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
 @Serializable
-data class User(
+data class UserModel(
 	val id: Int,
 
 	@Contextual
@@ -34,13 +33,13 @@ data class User(
 	val active: Boolean,
 
 	@Contextual
-	val inActiveAt: LocalDate?,
+	val inActiveAt: LocalDateTime?,
 
 	@Contextual
-	val createdAt: LocalDate,
+	val createdAt: LocalDateTime?,
 
 	@Contextual
-	val updatedAt: LocalDate?,
+	val updatedAt: LocalDateTime?,
 
 	val siCode: Long?,
 	val guCode: Long?,
