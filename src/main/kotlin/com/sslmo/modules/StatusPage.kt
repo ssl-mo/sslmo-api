@@ -8,6 +8,7 @@ import com.sslmo.system.error.InValidPasswordException
 import io.ktor.http.*
 import io.ktor.server.application.*
 import io.ktor.server.plugins.*
+import io.ktor.server.plugins.requestvalidation.*
 import io.ktor.server.plugins.statuspages.*
 import io.ktor.server.response.*
 import kotlinx.serialization.SerializationException
@@ -20,10 +21,12 @@ fun Application.configureStatusPage() {
 				Response.Error(message = "bad_request", description = ErrorMessage.BAD_REQUEST)
 			)
 		}
-//		exception<RequestValidationException> { call, e ->
-//
-//			call.respond(HttpStatusCode.BadRequest, Response.Error(e.reasons, "해당 필드에서 오류가 발생했습니다."))
-//		}
+		exception<RequestValidationException> { call, e ->
+			call.respond(
+				HttpStatusCode.BadRequest,
+				Response.Error("invalid_field", "${e.reasons}이 유효하지 않습니다.")
+			)
+		}
 		exception<SerializationException> { call, _ ->
 			call.respond(HttpStatusCode.InternalServerError, DefaultResponse(message = "internal_server_error"))
 		}
