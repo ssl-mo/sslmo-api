@@ -6,11 +6,11 @@ import com.sslmo.api.v1.users.endpoint.resetPassword
 import io.ktor.server.routing.*
 import org.slf4j.LoggerFactory
 
-fun Route.usersRouting() {
+fun Route.usersRouting(path: String) {
 
 	val logger = LoggerFactory.getLogger("Users Routing")
 
-	route("/user") {
+	route(path) {
 		login()
 		register()
 		resetPassword()

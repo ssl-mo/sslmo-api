@@ -15,18 +15,18 @@ import java.util.*
 @Module
 class UserService(private val repository: UserRepository) {
 
-	suspend fun emailLogin(email: String, password: String): User? {
+	suspend fun emailLogin(email: String, password: String): UserModel? {
 		val user = repository.findByEmail(email) ?: return null
 		val passwordVeryfied = BCrypt.verifyer().verify(password.toCharArray(), user.password).verified
 		if (!passwordVeryfied) throw InValidPasswordException()
-		return user
+		return user.toUserModel()
 	}
 
-	suspend fun socialLogin(socialId: String, signType: SignType): User {
-		return repository.findBySocialId(socialId, signType) ?: throw NotFoundException("존재하지 않는 유저입니다.")
+	suspend fun socialLogin(socialId: String, signType: SignType): UserModel {
+		return repository.findBySocialId(socialId, signType)?.toUserModel() ?: throw NotFoundException("존재하지 않는 유저입니다.")
 	}
 
-	suspend fun register(registerRequest: BaseRegisterRequest): User {
+	suspend fun register(registerRequest: BaseRegisterRequest): UserModel {
 		when (registerRequest) {
 			is EmailRegisterRequest -> {
 				repository.findByEmail(registerRequest.email)?.let {
@@ -36,7 +36,7 @@ class UserService(private val repository: UserRepository) {
 						throw DuplicateException("이미 사용중인 닉네임입니다.")
 					} ?: run {
 						val id = repository.addNewUser(registerRequest)
-						return repository.findById(id)
+						return repository.findById(id).toUserModel()
 					}
 				}
 			}
@@ -49,7 +49,7 @@ class UserService(private val repository: UserRepository) {
 						throw DuplicateException("이미 사용중인 닉네임입니다.")
 					} ?: run {
 						val id = repository.addNewUser(registerRequest)
-						return repository.findById(id)
+						return repository.findById(id).toUserModel()
 					}
 				}
 			}

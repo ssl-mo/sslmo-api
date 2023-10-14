@@ -4,9 +4,10 @@ import Response
 import com.auth0.jwt.JWT
 import com.auth0.jwt.algorithms.Algorithm
 import com.auth0.jwt.exceptions.JWTVerificationException
-import com.sslmo.api.v1.users.models.User
-import com.sslmo.database.DatabaseFactory
-import com.sslmo.database.tables.users
+import com.sslmo.api.v1.users.models.UserModel
+import com.sslmo.database.DatabaseFactory.dbQuery
+import com.sslmo.database.tables.User
+import com.sslmo.database.tables.Users
 import com.sslmo.models.TokenType
 import com.sslmo.system.error.ErrorMessage
 import com.sslmo.utils.getAccessJWTSecret
@@ -18,8 +19,7 @@ import io.ktor.server.application.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import io.ktor.util.*
-import org.ktorm.dsl.eq
-import org.ktorm.entity.find
+import org.jetbrains.exposed.sql.and
 import org.slf4j.LoggerFactory
 import java.util.*
 
@@ -43,7 +43,7 @@ class AuthorizedRouteSelector : RouteSelector() {
 	}
 }
 
-private val onCallUserKey = AttributeKey<User>("onCallUserKey")
+private val onCallUserKey = AttributeKey<UserModel>("onCallUserKey")
 
 val AuthorizedRoutePlugin =
 	createRouteScopedPlugin(name = "NewAuthorizedRoutePlugin", createConfiguration = ::PluginConfiguration) {
@@ -52,7 +52,6 @@ val AuthorizedRoutePlugin =
 		pluginConfig.apply {
 			onCall { call ->
 
-				val database = DatabaseFactory.connect()
 				val jwtAudience = config.getAppName()
 				val jwtIssuer = config.getAppHost()
 
@@ -68,7 +67,6 @@ val AuthorizedRoutePlugin =
 									.withIssuer(jwtIssuer)
 									.build()
 									.verify(accessToken)
-
 
 								// 토큰 만료 여부 확인
 								if (credential.expiresAt.before(Date())) {
@@ -86,20 +84,19 @@ val AuthorizedRoutePlugin =
 								} else {
 
 									credential.subject?.let { uuid ->
-										database.users.find {
-											it.uuid eq UUID.fromString(uuid)
-											it.active eq true
-										}?.let { user ->
 
-											// attributes에 user를 저장
-											call.attributes.put(onCallUserKey, user)
+										val user = dbQuery {
+											User.find { Users.uuid eq UUID.fromString(uuid) and (Users.active eq true) }
+										}.firstOrNull()
+
+										user?.let {
+											call.attributes.put(onCallUserKey, it.toUserModel())
 										} ?: run {
 											call.respond(
 												HttpStatusCode.Unauthorized,
 												Response.Error("unauthorized", ErrorMessage.UNAUTHORIZED)
 											)
 										}
-
 									} ?: run {
 										call.respond(
 											HttpStatusCode.Unauthorized,
@@ -146,47 +143,41 @@ val AuthorizedRoutePlugin =
 								} else {
 
 									credential.subject?.let { uuid ->
-										database.users.find {
-											it.uuid eq UUID.fromString(uuid)
-											it.active eq true
-										}?.let { user ->
+										User.find {
+											Users.uuid eq UUID.fromString(uuid) and (Users.active eq true)
+										}.firstOrNull()?.toUserModel()
+											?.let { user ->
 
-											val token = user.generateToken(config!!)
+												val token = user.generateToken(config!!)
 
-
-											// 쿠키에 토큰 저장
-											call.response.cookies.apply {
-												append(
-													Cookie(
-														// access token
-														name = "access-token",
-														value = token.accessToken,
-														path = "/",
-														maxAge = 60 * 30,
-														secure = true,
-														httpOnly = true,
+												// 쿠키에 토큰 저장
+												call.response.cookies.apply {
+													append(
+														Cookie(
+															// access token
+															name = "access-token",
+															value = token.accessToken,
+															path = "/",
+															maxAge = 60 * 30,
+															secure = true,
+															httpOnly = true,
+														)
 													)
-												)
-												append(
-													Cookie(
-														// refresh token
-														name = "refresh-token",
-														value = token.refreshToken,
-														path = "/",
-														maxAge = 60 * 60 * 24 * 14,
-														secure = true,
-														httpOnly = true,
+													append(
+														Cookie(
+															// refresh token
+															name = "refresh-token",
+															value = token.refreshToken,
+															path = "/",
+															maxAge = 60 * 60 * 24 * 14,
+															secure = true,
+															httpOnly = true,
+														)
 													)
-												)
+
+												}
 
 											}
-
-										} ?: run {
-											call.respond(
-												HttpStatusCode.Unauthorized,
-												Response.Error("유효하지 않은 토큰", "다시 시도 해주세요")
-											)
-										}
 
 									} ?: run {
 										call.respond(
@@ -216,6 +207,6 @@ class PluginConfiguration {
 	lateinit var type: TokenType
 }
 
-fun ApplicationCall.getUser(): User {
+fun ApplicationCall.getUser(): UserModel {
 	return attributes[onCallUserKey]
 }

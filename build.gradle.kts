@@ -1,6 +1,7 @@
 val ktor_version: String by project
 val kotlin_version: String by project
 val logback_version: String by project
+val exposedVersion: String by project
 
 plugins {
 	kotlin("jvm") version "1.8.22"
@@ -47,7 +48,13 @@ dependencies {
 
 //    DB
 	implementation("mysql:mysql-connector-java:8.0.33")
-	implementation("org.ktorm:ktorm-core:3.6.0")
+//	implementation("org.ktorm:ktorm-core:3.6.0")
+	implementation("org.jetbrains.exposed:exposed-core:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-crypt:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-dao:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-jdbc:$exposedVersion")
+	implementation("org.jetbrains.exposed:exposed-java-time:$exposedVersion")
+
 	implementation("com.zaxxer:HikariCP:5.0.1")
 
 //    Auth

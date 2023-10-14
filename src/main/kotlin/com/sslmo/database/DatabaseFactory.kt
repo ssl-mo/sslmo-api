@@ -6,7 +6,8 @@ import com.sslmo.utils.getDBUser
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import io.ktor.server.config.*
-import org.ktorm.database.Database
+import org.jetbrains.exposed.sql.Database
+import org.jetbrains.exposed.sql.transactions.transaction
 
 object DatabaseFactory {
 
@@ -21,11 +22,8 @@ object DatabaseFactory {
 		database = Database.connect(createHikariDataSource(url, user, password))
 	}
 
-	fun connect(): Database = database
-
-
 	fun <T> dbQuery(block: (database: Database) -> T): T {
-		return database.useTransaction {
+		return transaction {
 			block(database)
 		}
 	}

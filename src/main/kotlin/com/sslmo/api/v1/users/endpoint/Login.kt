@@ -3,7 +3,7 @@ package com.sslmo.api.v1.users.endpoint
 import Response
 import com.sslmo.api.v1.users.models.EmailLoginRequest
 import com.sslmo.api.v1.users.models.SocialLoginRequest
-import com.sslmo.api.v1.users.models.User
+import com.sslmo.api.v1.users.models.UserModel
 import com.sslmo.api.v1.users.service.UserService
 import com.sslmo.system.error.ErrorMessage
 import com.sslmo.utils.setCookie
@@ -30,7 +30,7 @@ fun Route.login() {
 			response {
 				HttpStatusCode.OK to {
 					description = "success"
-					body<Response.Success<User>>()
+					body<Response.Success<UserModel>>()
 				}
 				HttpStatusCode.NotFound to {
 					description = "not_found"
@@ -60,7 +60,7 @@ fun Route.login() {
 			response {
 				HttpStatusCode.OK to {
 					description = "succes"
-					body<Response.Success<User>>()
+					body<Response.Success<UserModel>>()
 				}
 				HttpStatusCode.NotFound to {
 					description = "not_found"

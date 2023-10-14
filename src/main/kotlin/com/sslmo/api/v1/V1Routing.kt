@@ -12,24 +12,24 @@ import io.ktor.server.routing.*
 import org.slf4j.LoggerFactory
 
 fun Route.v1Routing() {
-    route("/v1") {
-        val logger = LoggerFactory.getLogger("V1 Routing")
+	route("/v1") {
+		val logger = LoggerFactory.getLogger("V1 Routing")
 
-        usersRouting()
-
-
-        withCookie(TokenType.ACCESS) {
-
-            get("/test") {
-
-                val cookie = call.request.cookies
-
-                logger.debug("cookies: {}", cookie)
-
-                call.respond(HttpStatusCode.OK, Response.Success(data = call.getUser(), message = "테스트 성공"))
-            }
-        }
+		usersRouting("/user")
 
 
-    }
+		withCookie(TokenType.ACCESS) {
+
+			get("/test") {
+
+				val cookie = call.request.cookies
+
+				logger.debug("cookies: {}", cookie)
+
+				call.respond(HttpStatusCode.OK, Response.Success(data = call.getUser(), message = "테스트 성공"))
+			}
+		}
+
+
+	}
 }
